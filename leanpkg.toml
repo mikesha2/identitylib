@@ -1,0 +1,8 @@
+[package]
+name = "identities"
+version = "0.1"
+lean_version = "leanprover-community/lean:3.48.0"
+path = "src"
+
+[dependencies]
+mathlib = {git = "https://github.com/leanprover-community/mathlib", rev = "7a9e6ca4026238cd69531b05a919c7d6479375c8"}
