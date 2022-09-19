@@ -47,6 +47,19 @@ begin
   },
 end
 
+lemma add_sub_sum_same_range_eq_sum_sub (n : ℕ) (f : ℕ → ℝ) (g : ℕ → ℝ) :
+  (∑ (x : ℕ) in finset.range n, f x) - (∑ (x : ℕ) in finset.range n, g x) =
+  ∑ (x : ℕ) in finset.range n, (f x - g x) :=
+begin
+  induction n with n ih,
+  { simp, },
+  {
+    repeat {rw finset.sum_range_succ},
+    rw [← add_sub_assoc, ← ih],
+    ring_nf,
+  },
+end
+
 lemma arith_geom_progression_split_sum (n : ℕ) (a q r : ℝ) :
   ∑ (k : ℕ) in finset.range n, (a + k * r) * q ^ k = 
   (∑ (k : ℕ) in finset.range n, a * q ^ k) +
@@ -214,6 +227,70 @@ begin
   intros k p,
   ring_nf,
 end
+
+lemma second_deriv_geometric_series (n : ℕ) (x : ℝ) : 
+  deriv (λ y', deriv (λ y, ∑ (k : ℕ) in finset.range (n + 2), y ^ (k + 2)) y') x = (∑ (k : ℕ) in finset.range (n + 2), ↑(k + 2) * (↑k + 1) * x ^ k) :=
+begin
+  induction n with n ih,
+  {
+    simp,
+    repeat {rw finset.sum_range_succ},
+    simp,
+    ring_nf,
+  },
+  {
+    induction n with n ih,
+    {
+      simp,
+      repeat {rw finset.sum_range_succ},
+      simp,
+      ring_nf,
+      rw ← mul_assoc,
+      have : (4 : ℝ) * 3 = 12, by norm_num,
+      rw this,
+    },
+    {
+      simp,
+      rw finset.sum_range_succ,
+      nth_rewrite_rhs 0 finset.sum_range_succ,
+      simp,
+      nth_rewrite_rhs 0 mul_assoc,
+      rw [add_left_inj],
+      simp at ih,
+      rw ih,
+    },
+  },
+end
+
+lemma expand_second_deriv_geometric_series (n : ℕ) (x : ℝ) :
+  ∑ (k : ℕ) in finset.range (n + 2), ↑(k + 2) * (↑k + 1) * x ^ k = 
+  ∑ (k : ℕ) in finset.range (n + 2), ↑k ^ 2 * x ^ k +
+  ∑ (k : ℕ) in finset.range (n + 2), ↑3 * k * x ^ k +
+  ∑ (k : ℕ) in finset.range (n + 2), 2 * x ^ k :=
+begin
+  repeat {rw add_sum_sum_same_range_eq_sum_add},
+  rw finset.sum_congr rfl,
+  intros a b,
+  ring_nf,
+  rw nat.cast_add a 2,
+  simp only [left_distrib, right_distrib],
+  ring_nf,
+  have : ↑2 + 1 = (3 : ℝ), by norm_num,
+  rw this,
+  simp,
+end
+
+lemma reverse_second_deriv_geometric_series (n : ℕ) (x : ℝ) :
+  ∑ (k : ℕ) in finset.range (n + 2), ↑k ^ 2 * x ^ k = 
+  ∑ (k : ℕ) in finset.range (n + 2), ↑(k + 2) * (↑k + 1) * x ^ k -
+  ∑ (k : ℕ) in finset.range (n + 2), ↑3 * k * x ^ k +
+  ∑ (k : ℕ) in finset.range (n + 2), 2 * x ^ k :=
+begin
+  have := expand_second_deriv_geometric_series n x,
+  rw this,
+  rw sub_add,
+end
+
 
 lemma deriv_sub_geom_eq_sum (n : ℕ) (q : ℝ) :
   ∑ (k : ℕ) in finset.range n, (↑k + 1) * q ^ k - ∑ (k : ℕ) in finset.range n, q ^ k

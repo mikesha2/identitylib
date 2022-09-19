@@ -230,5 +230,13 @@ namespace chapter0_1
     rw [one_mul, add_left_inj, mul_comm (-q ^ n), pow_succ, ← mul_neg],
   end
 
+  theorem k_squared_geometric_progression_0_114 (n : ℕ) (x : ℝ) :
+    ∑ (k : ℕ) in finset.range n, ↑k ^ 2 * x ^ k =
+    ((-n ^ 2 + 2 * n - 1) * x ^ (n + 2) + (2 * n ^ 2 - 2 * n - 1) * x ^ (n + 1) 
+    - n ^ 2 * x ^ n + x ^ 2 + x) / (1 - x) ^ 3 :=
+  begin
+    
+  end
+
 
 end chapter0_1
