@@ -329,6 +329,95 @@ begin
   ring_nf,
 end
 
+theorem second_derivative_offset_geometric (n : ℕ) (x : ℝ) (h : x ≠ 1) : 
+  ∑ (x_1 : ℕ) in finset.range n, (↑x_1 + 2) * ((↑x_1 + 1) * x ^ x_1)
+  = deriv (λ y, ∑ (x_1 : ℕ) in finset.range n, (↑x_1 + 2) * y ^ (x_1 + 1)) x :=
+begin
+  simp,
+end
+
+lemma second_derivative_uniqueness_term_1 (n : ℕ) (x : ℝ) :
+  has_deriv_at (λ (y : ℝ), y ^ n) (n * x ^ (n - 1)) x :=
+begin
+  induction n with n ih,
+  {
+    simp,
+    exact has_deriv_at_const x 1,
+  },
+  {
+    rw [nat.succ_eq_add_one, nat.add_sub_cancel],
+    have := power_rule.deriv_of_power (n + 1) x,
+    rw [power_rule.x_to_n, power_rule.x_to_n'] at this,
+    simp at this,
+    rename_var y x,
+    rw [nat.cast_add, nat.cast_one],
+    exact this,
+  }
+end
+
+lemma second_derivative_uniqueness_term_2 (n : ℕ) (x : ℝ) :
+  has_deriv_at (λ (y : ℝ), y - 1) 1 x :=
+begin
+  have := power_rule.deriv_of_power 1 x,
+  rw [power_rule.x_to_n, power_rule.x_to_n'] at this,
+  simp at this,
+  rename_var x y at this,
+  exact has_deriv_at.sub_const this 1,
+end
+
+lemma second_derivative_uniqueness_term_3 (n : ℕ) (x : ℝ) :
+  has_deriv_at (λ (y : ℝ), y ^ n * (y - 1)) (↑n * x ^ (n - 1) * (x - 1) + x ^ n * 1) x :=
+begin
+  have a := second_derivative_uniqueness_term_1 n x,
+  have b := second_derivative_uniqueness_term_2 n x,
+  exact has_deriv_at.mul a b,
+end
+
+lemma second_derivative_uniqueness_term_4 (n : ℕ) (x : ℝ) :
+  has_deriv_at (λ (y : ℝ), (y ^ (n + 1) - 1)) ((↑n + 1) * x ^ n) x :=
+begin
+  have a := second_derivative_uniqueness_term_1 (n + 1) x,
+  rw [nat.add_sub_cancel, nat.cast_add, nat.cast_one] at a,
+  exact has_deriv_at.sub_const a 1,
+end
+
+lemma second_derivative_uniqueness_term_5 (n : ℕ) (x : ℝ) :
+  has_deriv_at (λ (y : ℝ), (y - 1) ^ 2) (2 * (x - 1)) x :=
+begin
+  have := second_derivative_uniqueness_term_2 n x,
+  have := has_deriv_at.mul this this,
+  simp at this,
+  ring_nf at this,
+  ring_nf,
+  exact this,
+end
+
+lemma second_derivative_uniqueness_equality (n : ℕ) (x : ℝ) (h : x ≠ 1) :
+  (((↑n + 1) * (↑n * x ^ (n - 1) * (x - 1) + x ^ n) - (↑n + 1) * x ^ n) * (x - 1) ^ 2 -
+     ((↑n + 1) * (x ^ n * (x - 1)) - (x ^ (n + 1) - 1)) * (2 * (x - 1))) /
+  ((x - 1) ^ 2) ^ 2 = 
+  (↑n * ↑(n + 1) * (x - 1) ^ 2 * x ^ (n - 1) - 2 * (-x ^ (n + 1) + 
+  (↑n + 1) * (x - 1) * x ^ n + 1)) / (x - 1) ^ 3 :=
+begin
+  
+end
+
+theorem second_derivative_uniqueness_geometric (n : ℕ) (x : ℝ) (h : x ≠ 1) :
+  has_deriv_at (λ (y : ℝ), ((↑n + 1) * y ^ n * (y - 1) - (y ^ (n + 1) - 1)) / (y - 1) ^ 2)
+    ((↑n * ↑(n + 1) * (x - 1) ^ 2 * (x ^ (n - 1)) - 2 * (-x ^ (n + 1) + (↑n + 1) * (x - 1) * x ^ n + 1)) / (x - 1) ^ 3) x :=
+begin
+  have a := second_derivative_uniqueness_term_3 n x,
+  replace a := has_deriv_at.const_mul (↑n + (1 : ℝ)) a,
+  have b := second_derivative_uniqueness_term_4 n x,
+  replace a := has_deriv_at.sub a b,
+  replace b := second_derivative_uniqueness_term_5 n x,
+  have := (ne_zero_iff_sub_ne_zero x 1).1 h,
+  replace := mul_ne_zero this this,
+  rw mul_self_eq_square at this,
+  have := has_deriv_at.div a b this,
+  simp at this,
+end
+
 /-
 lemma second_deriv_geometric_series_other (n : ℕ) (x : ℝ) (h : x ≠ 1) :
   deriv (λ y', deriv (λ y, ∑ (k : ℕ) in finset.range n, y ^ (k + 2)) y') x = (- 2 * (n + 2) * x ^ (n + 1) * (1 - x) + 2 * (1 - x ^ (n + 2)) - (n + 1) * (n + 2) * x ^ n * (1 - x) ^ 2) / (1 - x) ^ 3 :=

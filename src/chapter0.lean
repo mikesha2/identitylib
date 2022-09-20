@@ -241,13 +241,28 @@ namespace chapter0_1
     rw [one_mul, add_left_inj, mul_comm (-q ^ n), pow_succ, ← mul_neg],
   end
 
-  theorem k_squared_geometric_progression_0_114 (n : ℕ) (x : ℝ) :
+
+  
+
+  theorem k_squared_geometric_progression_0_114 (n : ℕ) (x : ℝ) (h : x ≠ 1) :
     ∑ (k : ℕ) in finset.range n, ↑k ^ 2 * x ^ k =
     ((-n ^ 2 + 2 * n - 1) * x ^ (n + 2) + (2 * n ^ 2 - 2 * n - 1) * x ^ (n + 1) 
     - n ^ 2 * x ^ n + x ^ 2 + x) / (1 - x) ^ 3 :=
   begin
     rw reverse_second_deriv_geometric_series n x,
+    rw ← second_deriv_geometric_series n x,
     rw second_deriv_geometric_sum_advanced_twice n x h,
+    have p₁ := deriv_sum_powers (n + 1) x,
+    replace p₁ := (deriv_except_at_one (n + 1) x h).1 p₁,
+    have p₂ := deriv_geom_at_ne_one n x h,
+    rename_var x y at p₁,
+    replace p₁ := has_deriv_at.unique p₁ p₂,
+    rw ← second_deriv_geometric_sum_advanced_twice n x h,
+    rw sum_x_to_n'_eq_deriv_sum at p₁,
+    simp,
+    clear p₂,
+    
+
   end
 
 
