@@ -35,6 +35,36 @@ begin
   },
 end
 
+lemma sub_ne_zero_iff_sub_ne_zero (a b : ℝ) : a - b ≠ 0 ↔ b - a ≠ 0 :=
+begin
+  split;
+  intro h₁;
+  by_contra;
+  apply h₁;
+  linarith,
+end
+
+lemma mul_self_eq_square (a : ℝ) : a * a = a ^ 2 := begin ring_nf, end
+
+lemma mul_self_twice_eq_cube (a : ℝ) : a * a * a = a ^ 3 := begin ring_nf, end
+
+lemma ne_zero_iff_sub_comm_ne_zero (a b : ℝ) : a ≠ b ↔ b - a ≠ 0 :=
+begin
+  split;
+  intro p,
+  {
+    have := lt_or_gt_of_ne p,
+    cases this,
+    intro q,
+    repeat {linarith},
+  },
+  {
+    have := lt_or_gt_of_ne p,
+    cases this,
+    repeat {linarith},
+  },
+end
+
 lemma add_sum_sum_same_range_eq_sum_add (n : ℕ) (f : ℕ → ℝ) (g : ℕ → ℝ) :
   (∑ (x : ℕ) in finset.range n, f x) + (∑ (x : ℕ) in finset.range n, g x) =
   ∑ (x : ℕ) in finset.range n, (f x + g x) :=
@@ -229,25 +259,18 @@ begin
 end
 
 lemma second_deriv_geometric_series (n : ℕ) (x : ℝ) : 
-  deriv (λ y', deriv (λ y, ∑ (k : ℕ) in finset.range (n + 2), y ^ (k + 2)) y') x = (∑ (k : ℕ) in finset.range (n + 2), ↑(k + 2) * (↑k + 1) * x ^ k) :=
+  deriv (λ y', deriv (λ y, ∑ (k : ℕ) in finset.range n, y ^ (k + 2)) y') x = (∑ (k : ℕ) in finset.range n, ↑(k + 2) * (↑k + 1) * x ^ k) :=
 begin
   induction n with n ih,
   {
     simp,
     repeat {rw finset.sum_range_succ},
-    simp,
-    ring_nf,
   },
   {
     induction n with n ih,
     {
       simp,
       repeat {rw finset.sum_range_succ},
-      simp,
-      ring_nf,
-      rw ← mul_assoc,
-      have : (4 : ℝ) * 3 = 12, by norm_num,
-      rw this,
     },
     {
       simp,
@@ -263,10 +286,10 @@ begin
 end
 
 lemma expand_second_deriv_geometric_series (n : ℕ) (x : ℝ) :
-  ∑ (k : ℕ) in finset.range (n + 2), ↑(k + 2) * (↑k + 1) * x ^ k = 
-  ∑ (k : ℕ) in finset.range (n + 2), ↑k ^ 2 * x ^ k +
-  ∑ (k : ℕ) in finset.range (n + 2), ↑3 * k * x ^ k +
-  ∑ (k : ℕ) in finset.range (n + 2), 2 * x ^ k :=
+  ∑ (k : ℕ) in finset.range n, ↑(k + 2) * (↑k + 1) * x ^ k = 
+  ∑ (k : ℕ) in finset.range n, ↑k ^ 2 * x ^ k +
+  ∑ (k : ℕ) in finset.range n, ↑3 * k * x ^ k +
+  ∑ (k : ℕ) in finset.range n, 2 * x ^ k :=
 begin
   repeat {rw add_sum_sum_same_range_eq_sum_add},
   rw finset.sum_congr rfl,
@@ -281,16 +304,64 @@ begin
 end
 
 lemma reverse_second_deriv_geometric_series (n : ℕ) (x : ℝ) :
-  ∑ (k : ℕ) in finset.range (n + 2), ↑k ^ 2 * x ^ k = 
-  ∑ (k : ℕ) in finset.range (n + 2), ↑(k + 2) * (↑k + 1) * x ^ k -
-  ∑ (k : ℕ) in finset.range (n + 2), ↑3 * k * x ^ k +
-  ∑ (k : ℕ) in finset.range (n + 2), 2 * x ^ k :=
+  ∑ (k : ℕ) in finset.range n, ↑k ^ 2 * x ^ k = 
+  ∑ (k : ℕ) in finset.range n, ↑(k + 2) * (↑k + 1) * x ^ k -
+  ∑ (k : ℕ) in finset.range n, ↑3 * k * x ^ k -
+  ∑ (k : ℕ) in finset.range n, 2 * x ^ k :=
 begin
   have := expand_second_deriv_geometric_series n x,
   rw this,
-  rw sub_add,
+  ring_nf,
 end
 
+lemma second_deriv_geometric_sum_advanced_twice (n : ℕ) (x : ℝ) (h : x ≠ 1) :
+  deriv (λ y', deriv (λ y, ∑ (k : ℕ) in finset.range n, y ^ (k + 2)) y') x =
+  deriv (λ y', deriv (λ y, ∑ (k : ℕ) in finset.range (n + 2), y ^ k) y') x :=
+begin
+  simp,
+  nth_rewrite_rhs 0 finset.sum_range_succ',
+  nth_rewrite_rhs 0 finset.sum_range_succ',
+  simp,
+  rw finset.sum_congr rfl,
+  intros x p,
+  simp,
+  left,
+  ring_nf,
+end
+
+/-
+lemma second_deriv_geometric_series_other (n : ℕ) (x : ℝ) (h : x ≠ 1) :
+  deriv (λ y', deriv (λ y, ∑ (k : ℕ) in finset.range n, y ^ (k + 2)) y') x = (- 2 * (n + 2) * x ^ (n + 1) * (1 - x) + 2 * (1 - x ^ (n + 2)) - (n + 1) * (n + 2) * x ^ n * (1 - x) ^ 2) / (1 - x) ^ 3 :=
+begin
+
+/-
+  rw ne_zero_iff_sub_comm_ne_zero at h,
+  rw ne_iff_lt_or_gt at h,
+  dsimp,
+  cases h,
+  {
+    have a : 0 < x - 1, by linarith,
+    have b := mul_pos (mul_pos a a) a,
+    have : x - 1 ≠ 0, by linarith,
+    have m₂ := mul_inv_cancel (mul_ne_zero (mul_ne_zero this this) this),
+    rw mul_self_twice_eq_cube (x - 1) at b m₂,
+    have m₄ : 
+        (∑ (x_1 : ℕ) in finset.range n, (↑x_1 + 2) * ((↑x_1 + 1) * x ^ x_1)) * (x - 1) ^ 3 =
+        ((-(2 * (↑n + 2) * x ^ (n + 1) * (1 - x)) + 2 * (1 - x ^ (n + 2))
+        - (↑n + 1) * (↑n + 2) * x ^ n * (1 - x) ^ 2) / (1 - x) ^ 3) * (x - 1) ^ 3
+        ↔ (∑ (x_1 : ℕ) in finset.range n, (↑x_1 + 2) * ((↑x_1 + 1) * x ^ x_1)) =
+        ((-(2 * (↑n + 2) * x ^ (n + 1) * (1 - x)) + 2 * (1 - x ^ (n + 2))
+        - (↑n + 1) * (↑n + 2) * x ^ n * (1 - x) ^ 2) / (1 - x) ^ 3)
+        := mul_right_cancel_iff_of_pos b,
+    rw ← m₄,
+    clear m₄,
+  },
+  {
+
+  },
+-/  
+end
+-/
 
 lemma deriv_sub_geom_eq_sum (n : ℕ) (q : ℝ) :
   ∑ (k : ℕ) in finset.range n, (↑k + 1) * q ^ k - ∑ (k : ℕ) in finset.range n, q ^ k
@@ -343,14 +414,3 @@ begin
     rw [pow_succ, nat.succ_eq_add_one, ← div_div, div_self h],
   },
 end
-
-lemma sub_ne_zero_iff_sub_ne_zero (a b : ℝ) : a - b ≠ 0 ↔ b - a ≠ 0 :=
-begin
-  split;
-  intro h₁;
-  by_contra;
-  apply h₁;
-  linarith,
-end
-
-lemma mul_self_eq_square (a : ℝ) : a * a = a ^ 2 := begin ring_nf, end

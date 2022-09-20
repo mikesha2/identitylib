@@ -246,7 +246,8 @@ namespace chapter0_1
     ((-n ^ 2 + 2 * n - 1) * x ^ (n + 2) + (2 * n ^ 2 - 2 * n - 1) * x ^ (n + 1) 
     - n ^ 2 * x ^ n + x ^ 2 + x) / (1 - x) ^ 3 :=
   begin
-    
+    rw reverse_second_deriv_geometric_series n x,
+    rw second_deriv_geometric_sum_advanced_twice n x h,
   end
 
 
