@@ -705,3 +705,28 @@ begin
   },
 end
 
+lemma left_linearity_first_of_three_sum {n : ℕ} {a : ℝ} {b c : ℕ → ℝ} :
+  ∑ (k : ℕ) in finset.range n, a * (b k) * (c k) = a * ∑ (k : ℕ) in finset.range n, b k * c k :=
+begin
+  rw finset.mul_sum,
+  apply finset.sum_congr rfl,
+  intros a b,
+  rw mul_assoc,
+end
+
+lemma linearity_second_of_three_sum {n : ℕ} {a b : ℝ} {c : ℕ → ℝ} :
+  ∑ (k : ℕ) in finset.range n, a * b * (c k) = b * ∑ (k : ℕ) in finset.range n, a * (c k) :=
+begin
+  rw finset.mul_sum,
+  apply finset.sum_congr rfl,
+  intros a b,
+  ring_nf,
+end
+
+lemma summand_comm {n : ℕ} {a : ℝ} {c : ℕ → ℝ} :
+  ∑ (k : ℕ) in finset.range n, c k * a = ∑ (k : ℕ) in finset.range n, a * c k :=
+begin
+  apply finset.sum_congr rfl,
+  intros p q,
+  ring_nf,
+end

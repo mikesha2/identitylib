@@ -252,7 +252,7 @@ namespace chapter0_1
     rw [one_mul, add_left_inj, mul_comm (-q ^ n), pow_succ, ← mul_neg],
   end
 
-  theorem k_squared_geometric_progression_0_114 (n : ℕ) (x : ℝ) (h : x ≠ 1) :
+  theorem k_squared_geometric_progression_0_114 (n : ℕ) (x : ℝ) (h : x ≠ 1) (h₂ : n ≥ 1) :
     ∑ (k : ℕ) in finset.range n, ↑k ^ 2 * x ^ k =
     ((-n ^ 2 + 2 * n - 1) * x ^ (n + 2) + (2 * n ^ 2 - 2 * n - 1) * x ^ (n + 1) 
     - n ^ 2 * x ^ n + x ^ 2 + x) / (1 - x) ^ 3 :=
@@ -261,16 +261,31 @@ namespace chapter0_1
     rw ← second_deriv_geometric_series n x,
     simp,
     have p₁ := second_derivative_uniqueness_geometric (n + 1) x h,
+    have p₃ := (deriv_of_geometric_rv (n + 1)),
+    have one_plus_one : (1 : ℝ) + 1 = 2, by norm_num,
+    rw [nat.cast_add, nat.cast_one, add_assoc, add_assoc, one_plus_one] at p₃,
     have p₂ := second_derivative_uniqueness_geometric_2 n x (has_second_deriv_at_geometric_series n x),
     replace p₁ := deriv_of_functions_eq_except_at_const x 1 
       ((↑(n + 1) * ↑(n + 2) * (x - 1) ^ 2 * x ^ n -
       2 * (-x ^ (n + 2) + (↑n + 2) * (x - 1) * x ^ (n + 1) + 1)) / (x - 1) ^ 3)
       h
       (λ x, ((↑n + 2) * x ^ (n + 1) * (x - 1) - (x ^ (n + 2) - 1)) / (x - 1) ^ 2)
-      (λ (x : ℝ), ∑ (k : ℕ) in finset.range (n + 1), (↑k + 1) * x ^ k) (deriv_of_geometric_rv (n + 1)) p₁,
-
+      (λ (x : ℝ), ∑ (k : ℕ) in finset.range (n + 1), (↑k + 1) * x ^ k) p₃,
+    replace p₃ := second_derivative_uniqueness_geometric (n + 1) x h,
+    have one_plus_one_nat : 1 + 1 = 2, by norm_num,
+    rw [nat.cast_add, nat.cast_one, add_assoc, add_assoc, one_plus_one, one_plus_one_nat] at p₃,
+    rw [nat.cast_add, nat.cast_one] at p₁,
+    replace p₁ := p₁ p₃,
     have a := has_deriv_at.unique p₁ p₂,
-
+    clear p₁ p₂ p₃,
+    rw [← a, ← finset.mul_sum],
+    clear one_plus_one one_plus_one_nat,
+    rw [left_linearity_first_of_three_sum, pure_geometric_progression],
+    induction n with n ih,
+    { exfalso, linarith, },
+    {
+      
+    },
   end
 
 
