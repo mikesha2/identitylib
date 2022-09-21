@@ -260,8 +260,7 @@ namespace chapter0_1
     rw ← second_deriv_geometric_sum_advanced_twice n x h,
     rw sum_x_to_n'_eq_deriv_sum at p₁,
     simp,
-    clear p₂,
-    
+    have p₃ := second_derivative_uniqueness_geometric n x h,
 
   end
 

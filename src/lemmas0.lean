@@ -399,7 +399,41 @@ lemma second_derivative_uniqueness_equality (n : ℕ) (x : ℝ) (h : x ≠ 1) :
   (↑n * ↑(n + 1) * (x - 1) ^ 2 * x ^ (n - 1) - 2 * (-x ^ (n + 1) + 
   (↑n + 1) * (x - 1) * x ^ n + 1)) / (x - 1) ^ 3 :=
 begin
-  
+  rw ne_zero_iff_sub_ne_zero at h,
+  have h' := h,
+  rw ← mul_self_pos at h,
+  replace h := mul_pos h h,
+  repeat {rw mul_self_eq_square at h},
+  have : ((((↑n + 1) * (↑n * x ^ (n - 1) * (x - 1) + x ^ n) - (↑n + 1) * x ^ n) * (x - 1) ^ 2 -
+       ((↑n + 1) * (x ^ n * (x - 1)) - (x ^ (n + 1) - 1)) * (2 * (x - 1))) /
+    ((x - 1) ^ 2) ^ 2) * ((x - 1) ^ 2) ^ 2 =
+  ((↑n * ↑(n + 1) * (x - 1) ^ 2 * x ^ (n - 1) - 
+  2 * (-x ^ (n + 1) + (↑n + 1) * (x - 1) * x ^ n + 1)) / (x - 1) ^ 3) * ((x - 1) ^ 2) ^ 2 ↔
+  (((↑n + 1) * (↑n * x ^ (n - 1) * (x - 1) + x ^ n) - (↑n + 1) * x ^ n) * (x - 1) ^ 2 -
+       ((↑n + 1) * (x ^ n * (x - 1)) - (x ^ (n + 1) - 1)) * (2 * (x - 1))) /
+    ((x - 1) ^ 2) ^ 2 =
+  (↑n * ↑(n + 1) * (x - 1) ^ 2 * x ^ (n - 1) - 2 * (-x ^ (n + 1) + (↑n + 1) * (x - 1) * x ^ n + 1)) / (x - 1) ^ 3
+  := mul_right_cancel_iff_of_pos h,
+  rw ← this,
+  clear this,
+  rw div_mul,
+  repeat {rw div_eq_mul_inv},
+  have m₁ := mul_ne_zero h' h',
+  replace m₁ := mul_ne_zero m₁ m₁,
+  have m₂ := mul_inv_cancel m₁,
+  repeat {rw mul_self_eq_square at m₂},
+  have : 2 * 2 = 4, by norm_num,
+  rw [m₂, ← div_eq_mul_inv, div_one, ← pow_mul, this, 
+    mul_assoc (↑n * ↑(n + 1) * (x - 1) ^ 2 * x ^ (n - 1) - 2 * 
+    (-x ^ (n + 1) + (↑n + 1) * (x - 1) * x ^ n + 1)),
+    mul_comm ((x - 1) ^ 3)⁻¹],
+
+  have : 3 ≤ 4, by norm_num,
+  rw [← pow_sub₀ (x - 1) h' this],
+  simp,
+  simp only [left_distrib, right_distrib, mul_sub_left_distrib, mul_sub_right_distrib,
+    one_mul, mul_one],
+  ring_nf,
 end
 
 theorem second_derivative_uniqueness_geometric (n : ℕ) (x : ℝ) (h : x ≠ 1) :
@@ -416,41 +450,10 @@ begin
   rw mul_self_eq_square at this,
   have := has_deriv_at.div a b this,
   simp at this,
+  rw second_derivative_uniqueness_equality n x h at this,
+  ring_nf at *,
+  assumption,
 end
-
-/-
-lemma second_deriv_geometric_series_other (n : ℕ) (x : ℝ) (h : x ≠ 1) :
-  deriv (λ y', deriv (λ y, ∑ (k : ℕ) in finset.range n, y ^ (k + 2)) y') x = (- 2 * (n + 2) * x ^ (n + 1) * (1 - x) + 2 * (1 - x ^ (n + 2)) - (n + 1) * (n + 2) * x ^ n * (1 - x) ^ 2) / (1 - x) ^ 3 :=
-begin
-
-/-
-  rw ne_zero_iff_sub_comm_ne_zero at h,
-  rw ne_iff_lt_or_gt at h,
-  dsimp,
-  cases h,
-  {
-    have a : 0 < x - 1, by linarith,
-    have b := mul_pos (mul_pos a a) a,
-    have : x - 1 ≠ 0, by linarith,
-    have m₂ := mul_inv_cancel (mul_ne_zero (mul_ne_zero this this) this),
-    rw mul_self_twice_eq_cube (x - 1) at b m₂,
-    have m₄ : 
-        (∑ (x_1 : ℕ) in finset.range n, (↑x_1 + 2) * ((↑x_1 + 1) * x ^ x_1)) * (x - 1) ^ 3 =
-        ((-(2 * (↑n + 2) * x ^ (n + 1) * (1 - x)) + 2 * (1 - x ^ (n + 2))
-        - (↑n + 1) * (↑n + 2) * x ^ n * (1 - x) ^ 2) / (1 - x) ^ 3) * (x - 1) ^ 3
-        ↔ (∑ (x_1 : ℕ) in finset.range n, (↑x_1 + 2) * ((↑x_1 + 1) * x ^ x_1)) =
-        ((-(2 * (↑n + 2) * x ^ (n + 1) * (1 - x)) + 2 * (1 - x ^ (n + 2))
-        - (↑n + 1) * (↑n + 2) * x ^ n * (1 - x) ^ 2) / (1 - x) ^ 3)
-        := mul_right_cancel_iff_of_pos b,
-    rw ← m₄,
-    clear m₄,
-  },
-  {
-
-  },
--/  
-end
--/
 
 lemma deriv_sub_geom_eq_sum (n : ℕ) (q : ℝ) :
   ∑ (k : ℕ) in finset.range n, (↑k + 1) * q ^ k - ∑ (k : ℕ) in finset.range n, q ^ k
