@@ -271,7 +271,8 @@ begin
 end
 
 lemma second_deriv_geometric_series (n : ℕ) (x : ℝ) : 
-  deriv (λ y', deriv (λ y, ∑ (k : ℕ) in finset.range n, y ^ (k + 2)) y') x = (∑ (k : ℕ) in finset.range n, ↑(k + 2) * (↑k + 1) * x ^ k) :=
+  deriv (λ y', deriv (λ y, ∑ (k : ℕ) in finset.range n, y ^ (k + 2)) y') x = 
+    (∑ (k : ℕ) in finset.range n, ↑(k + 2) * (↑k + 1) * x ^ k) :=
 begin
   induction n with n ih,
   {
@@ -295,6 +296,23 @@ begin
       rw ih,
     },
   },
+end
+
+lemma has_second_deriv_at_geometric_series (n : ℕ) (x : ℝ) :
+  has_deriv_at (λ (y : ℝ), ∑ (k : ℕ) in finset.range n, (↑k + 2) * y ^ (k + 1))
+  (∑ (k : ℕ) in finset.range n, (↑k + 2) * ((↑k + 1) * x ^ k))
+  x :=
+begin
+  refine has_deriv_at.sum _,
+  intros k p,
+  have a := power_rule.deriv_of_power (k + 1) x,
+  rw [power_rule.x_to_n, power_rule.x_to_n'] at a,
+  simp at a,
+  rename_var x y at a,
+  have b := has_deriv_at_const x (↑k + (2 : ℝ)),
+  have := has_deriv_at.mul b a,
+  simp at this,
+  exact this,
 end
 
 lemma expand_second_deriv_geometric_series (n : ℕ) (x : ℝ) :

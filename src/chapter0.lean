@@ -169,6 +169,15 @@ namespace chapter0_1
     assumption,
   end
 
+  lemma deriv_of_geometric_rv (n : ℕ) (x : ℝ) (h : x ≠ 1):
+    ((↑n + 1) * x ^ n * (x - 1) - (x ^ (n + 1) - 1)) / (x - 1) ^ 2 =
+    ∑ (k : ℕ) in finset.range n, (↑k + 1) * x ^ k :=
+  begin
+    have := deriv_of_geometric n x h,
+    symmetry,
+    exact this,
+  end
+
   theorem arithmetic_geometric_progression_0_113 (n : ℕ) (a q r : ℝ) (h : q ≠ 1) :
     ∑ (k : ℕ) in finset.range (n + 1), ((a + k * r) * q ^ k) = 
       (a - (a + n * r) * q ^ (n + 1)) / (1 - q) + r * q * (1 - q ^ n) / (1 - q) ^ 2 :=
@@ -250,11 +259,18 @@ namespace chapter0_1
   begin
     rw reverse_second_deriv_geometric_series n x,
     rw ← second_deriv_geometric_series n x,
-    rw second_deriv_geometric_sum_advanced_twice n x h,
     simp,
-    have p₃ := second_derivative_uniqueness_geometric n x h,
-    have p₄ := second_derivative_uniqueness_geometric_2 n x,
-    
+    have p₁ := second_derivative_uniqueness_geometric (n + 1) x h,
+    have p₂ := second_derivative_uniqueness_geometric_2 n x (has_second_deriv_at_geometric_series n x),
+    replace p₁ := deriv_of_functions_eq_except_at_const x 1 
+      ((↑(n + 1) * ↑(n + 2) * (x - 1) ^ 2 * x ^ n -
+      2 * (-x ^ (n + 2) + (↑n + 2) * (x - 1) * x ^ (n + 1) + 1)) / (x - 1) ^ 3)
+      h
+      (λ x, ((↑n + 2) * x ^ (n + 1) * (x - 1) - (x ^ (n + 2) - 1)) / (x - 1) ^ 2)
+      (λ (x : ℝ), ∑ (k : ℕ) in finset.range (n + 1), (↑k + 1) * x ^ k) (deriv_of_geometric_rv (n + 1)) p₁,
+
+    have a := has_deriv_at.unique p₁ p₂,
+
   end
 
 
