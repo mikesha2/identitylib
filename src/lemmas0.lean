@@ -65,6 +65,18 @@ begin
   },
 end
 
+lemma half_bound (x y : ℝ) {c : ℝ} : (|y - x| < |c - x| / 2) → (x ≠ c) → (y ≠ c) :=
+begin
+  intros p q,
+  have := abs_nonneg (y - x),
+  have := abs_nonneg (c - x),
+  have : 0 < |c - x| / 2, by linarith,
+  by_contra,
+  apply q,
+  rw h at p,
+  linarith,
+end
+
 lemma add_sum_sum_same_range_eq_sum_add (n : ℕ) (f : ℕ → ℝ) (g : ℕ → ℝ) :
   (∑ (x : ℕ) in finset.range n, f x) + (∑ (x : ℕ) in finset.range n, g x) =
   ∑ (x : ℕ) in finset.range n, (f x + g x) :=
@@ -455,6 +467,174 @@ begin
   assumption,
 end
 
+theorem inner_derivs_match (n : ℕ) (x : ℝ) : ∀ (k : ℕ), k ∈ finset.range(n) → 
+  has_deriv_at (λ (y : ℝ), (↑k + 2) * y ^ (k + 1)) ((↑k + 2) * ((↑k + 1) * x ^ k)) x :=
+begin
+  intros k p,
+  refine has_deriv_at.const_mul _ _,
+  exact power_rule.deriv_of_power (k + 1) x,
+end
+
+theorem deriv_of_functions_eq (x f' : ℝ)
+  (f g : ℝ → ℝ) (h' : ∀ (y : ℝ), f y = g y) :
+  has_deriv_at f f' x → has_deriv_at g f' x :=
+begin
+  intro p,
+  rw [has_deriv_at, has_deriv_at_filter, has_fderiv_at_filter,
+    asymptotics.is_o_iff] at *,
+  intros c r,
+  specialize p r,
+  rw metric.eventually_nhds_iff_ball at *,
+  simp at p, simp,
+  cases p with d q,
+  cases q with q q',
+  use d,
+  split,
+  { exact q, },
+  {
+    intros y m,
+    have m₁ := h' y,
+    have m₂ := h' x,
+    rw [← m₁, ← m₂],
+    exact q' y m,
+  },
+end
+
+theorem deriv_of_functions_eq_add_const (x f' : ℝ) {c : ℝ}
+  (f g : ℝ → ℝ) (h' : ∀ (y : ℝ), f y + c = g y) :
+  has_deriv_at f f' x → has_deriv_at g f' x :=
+begin
+  intro p,
+  rw [has_deriv_at, has_deriv_at_filter, has_fderiv_at_filter,
+    asymptotics.is_o_iff] at *,
+  intros c r,
+  specialize p r,
+  rw metric.eventually_nhds_iff_ball at *,
+  simp at p, simp,
+  cases p with d q,
+  cases q with q q',
+  use d,
+  split,
+  { exact q, },
+  {
+    intros y m,
+    have m₁ := h' y,
+    have m₂ := h' x,
+    rw [← m₁, ← m₂],
+    have := q' y m,
+    ring_nf at this,
+    ring_nf,
+    assumption,
+  },
+end
+
+theorem deriv_of_functions_eq_except_at_const (x x' f' : ℝ) (h : x ≠ x')
+  (f g : ℝ → ℝ) (h' : ∀ (y : ℝ), (y ≠ x') → f y = g y) :
+  has_deriv_at f f' x → has_deriv_at g f' x :=
+begin
+  intro p,
+  rw [has_deriv_at, has_deriv_at_filter, has_fderiv_at_filter,
+    asymptotics.is_o_iff] at *,
+  intros c r,
+  specialize p r,
+  rw metric.eventually_nhds_iff_ball at *,
+  simp at p, simp,
+  cases p with d q,
+  cases q with q q',
+  use min d (|x - x'| / 2),
+  split,
+  { rw [lt_min_iff],
+    split,
+    { exact q, },
+    {
+      have := abs_nonneg (x - x'),
+      rw ne_zero_iff_sub_ne_zero at h,
+      rw ← abs_pos at h,
+      have : 0 < |x - x'| / 2, by linarith,
+      exact this,
+    },
+  },
+  {
+    intros y m,
+    rw lt_min_iff at m,
+    specialize q' y m.1,
+    have m' := m.2,
+    rw abs_sub_comm at m',
+    have := h' y (half_bound x y m' h),
+    rw ← this,
+    have := h' x h,
+    rw ← this,
+    exact q',
+  },
+end
+
+theorem deriv_of_functions_eq_except_at_const_add_const (x x' f' : ℝ) {c : ℝ} (h : x ≠ x')
+  (f g : ℝ → ℝ) (h' : ∀ (y : ℝ), (y ≠ x') → f y + c = g y) :
+  has_deriv_at f f' x → has_deriv_at g f' x :=
+begin
+  intro p,
+  rw [has_deriv_at, has_deriv_at_filter, has_fderiv_at_filter,
+    asymptotics.is_o_iff] at *,
+  intros c r,
+  specialize p r,
+  rw metric.eventually_nhds_iff_ball at *,
+  simp at p, simp,
+  cases p with d q,
+  cases q with q q',
+  use min d (|x - x'| / 2),
+  split,
+  { rw [lt_min_iff],
+    split,
+    { exact q, },
+    {
+      have := abs_nonneg (x - x'),
+      rw ne_zero_iff_sub_ne_zero at h,
+      rw ← abs_pos at h,
+      have : 0 < |x - x'| / 2, by linarith,
+      exact this,
+    },
+  },
+  {
+    intros y m,
+    rw lt_min_iff at m,
+    specialize q' y m.1,
+    have m' := m.2,
+    rw abs_sub_comm at m',
+    have := h' y (half_bound x y m' h),
+    rw ← this,
+    have := h' x h,
+    rw ← this,
+    ring_nf,
+    ring_nf at q',
+    exact q',
+  },
+end
+
+lemma first_deriv_geom_offset_eq_add_const (n : ℕ) (x : ℝ) :
+  ∑ (k : ℕ) in finset.range n, (↑k + 2) * x ^ (k + 1) + 1 =
+  (∑ (k : ℕ) in finset.range (n + 1), (↑k + 1) * x ^ k) :=
+begin
+  rw finset.sum_range_succ',
+  simp,
+  apply finset.sum_congr rfl,
+  intros k p,
+  ring_nf,
+end
+
+theorem second_derivative_uniqueness_geometric_2 (n : ℕ) (x : ℝ) :
+  has_deriv_at (λ (y : ℝ), ∑ (k : ℕ) in finset.range n, (↑k + 2) * y ^ (k + 1))
+    (∑ (k : ℕ) in finset.range n, (↑k + 2) * ((↑k + 1) * x ^ k)) x → 
+  has_deriv_at (λ (y : ℝ), ∑ (k : ℕ) in finset.range (n + 1), (↑k + 1) * y ^ k)
+    (∑ (k : ℕ) in finset.range n, (↑k + 2) * ((↑k + 1) * x ^ k)) x :=
+begin
+  intro p,
+  have := deriv_of_functions_eq_add_const x (∑ (k : ℕ) in finset.range n, (↑k + 2) * ((↑k + 1) * x ^ k))
+    (λ (y : ℝ), ∑ (k : ℕ) in finset.range n, (↑k + 2) * y ^ (k + 1))
+    (λ (y : ℝ), ∑ (k : ℕ) in finset.range (n + 1), (↑k + 1) * y ^ k)
+    (first_deriv_geom_offset_eq_add_const n),
+  exact this p,
+end
+
 lemma deriv_sub_geom_eq_sum (n : ℕ) (q : ℝ) :
   ∑ (k : ℕ) in finset.range n, (↑k + 1) * q ^ k - ∑ (k : ℕ) in finset.range n, q ^ k
   = ∑ (k : ℕ) in finset.range n, k * q ^ k :=
@@ -506,3 +686,4 @@ begin
     rw [pow_succ, nat.succ_eq_add_one, ← div_div, div_self h],
   },
 end
+

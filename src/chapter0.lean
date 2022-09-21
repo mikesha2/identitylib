@@ -110,13 +110,10 @@ namespace chapter0_1
         intros x' q₁,
         simp at q₁,
         unfold dist at q₁,
-        have : x' ≠ 1 := begin
-          by_contra,
-          rw h at q₁,
-          have q₂ := q₁.2,
-          rw abs_sub_comm at q₂,
-          linarith,
-        end,
+        rw abs_sub_comm at this,
+        have q₁' := q₁.2,
+        nth_rewrite_rhs 0 abs_sub_comm at q₁',
+        have := half_bound q x' q₁' h,
         specialize h₂ x' q₁.1,
         rw ← pure_geometric_progression n q h,
         rw ← pure_geometric_progression n x' this,
@@ -146,19 +143,30 @@ namespace chapter0_1
         intros x' q₁,
         simp at q₁,
         unfold dist at q₁,
-        have : x' ≠ 1 := begin
-          by_contra,
-          rw h at q₁,
-          have q₂ := q₁.2,
-          rw abs_sub_comm at q₂,
-          linarith,
-        end,
+        rw abs_sub_comm at this,
+        have q₁' := q₁.2,
+        nth_rewrite_rhs 0 abs_sub_comm at q₁',
+        have := half_bound q x' q₁' h,
         specialize h₂ x' q₁.1,
         rw pure_geometric_progression n q h,
         rw pure_geometric_progression n x' this,
         assumption,
       },
     },
+  end
+
+  lemma deriv_of_geometric (n : ℕ) (x : ℝ) (h : x ≠ 1):
+    ∑ (k : ℕ) in finset.range n, (↑k + 1) * x ^ k = 
+    ((↑n + 1) * x ^ n * (x - 1) - (x ^ (n + 1) - 1)) / (x - 1) ^ 2 :=
+  begin
+    have p₁ := deriv_sum_powers (n + 1) x,
+    replace p₁ := (deriv_except_at_one (n + 1) x h).1 p₁,
+    have p₂ := deriv_geom_at_ne_one n x h,
+    rename_var x y at p₁,
+    replace p₁ := has_deriv_at.unique p₁ p₂,
+    clear p₂,
+    rw sum_x_to_n'_eq_deriv_sum n x at p₁,
+    assumption,
   end
 
   theorem arithmetic_geometric_progression_0_113 (n : ℕ) (a q r : ℝ) (h : q ≠ 1) :
@@ -168,13 +176,7 @@ namespace chapter0_1
     rw arith_geom_progression_split_sum (n + 1) a q r,
     rw geometric_progression_0_112 (n + 1) a q h,
     rw ← deriv_sub_geom_eq_sum,
-    have p₁ := deriv_sum_powers (n + 1 + 1) q,
-    replace p₁ := (deriv_except_at_one (n + 1 + 1) q h).1 p₁,
-    have p₂ := deriv_geom_at_ne_one (n + 1) q h,
-    rename_var x y at p₁,
-    replace p₁ := has_deriv_at.unique p₁ p₂,
-    clear p₂,
-    rw sum_x_to_n'_eq_deriv_sum (n + 1) q at p₁,
+    have p₁ := deriv_of_geometric (n + 1) q h,
     rw p₁,
     rw pure_geometric_progression (n + 1) q h,
     rw ← neg_sub 1 q,
@@ -241,9 +243,6 @@ namespace chapter0_1
     rw [one_mul, add_left_inj, mul_comm (-q ^ n), pow_succ, ← mul_neg],
   end
 
-
-  
-
   theorem k_squared_geometric_progression_0_114 (n : ℕ) (x : ℝ) (h : x ≠ 1) :
     ∑ (k : ℕ) in finset.range n, ↑k ^ 2 * x ^ k =
     ((-n ^ 2 + 2 * n - 1) * x ^ (n + 2) + (2 * n ^ 2 - 2 * n - 1) * x ^ (n + 1) 
@@ -252,16 +251,10 @@ namespace chapter0_1
     rw reverse_second_deriv_geometric_series n x,
     rw ← second_deriv_geometric_series n x,
     rw second_deriv_geometric_sum_advanced_twice n x h,
-    have p₁ := deriv_sum_powers (n + 1) x,
-    replace p₁ := (deriv_except_at_one (n + 1) x h).1 p₁,
-    have p₂ := deriv_geom_at_ne_one n x h,
-    rename_var x y at p₁,
-    replace p₁ := has_deriv_at.unique p₁ p₂,
-    rw ← second_deriv_geometric_sum_advanced_twice n x h,
-    rw sum_x_to_n'_eq_deriv_sum at p₁,
     simp,
     have p₃ := second_derivative_uniqueness_geometric n x h,
-
+    have p₄ := second_derivative_uniqueness_geometric_2 n x,
+    
   end
 
 
