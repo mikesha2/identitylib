@@ -575,6 +575,63 @@ namespace chapter0_1
     },
   end
 
+  theorem sum_k_mul_k_add_one_sq_0_123 (n : ℕ) :
+    ∑ (k : ℕ) in finset.range n, (↑k + (1 : ℝ)) * (k + 2) ^ 2 = ↑n / 12 * (n + 1) * (n + 2) * (3 * n + 5) :=
+  begin
+    induction n with n ih,
+    { simp, },
+    {
+      rw [finset.sum_range_succ, nat.succ_eq_add_one, ih],
+      cancel_denoms,
+      simp only [right_distrib, left_distrib, div_eq_mul_inv, nat.cast_add, nat.cast_one, 
+        one_mul, mul_one],
+      ring_nf,
+    },
+  end
+
+  theorem sum_k_mul_n_sq_sub_k_sq_0_124_1 (q n k : ℕ) :
+    ∑ (k : ℕ) in finset.range q, (↑k + (1 : ℝ)) * (n ^ 2 - (k + 1) ^ 2) = q / 4 * (q + 1) * (2 * n ^ 2 - q ^ 2 - q) :=
+  begin
+    induction q with q ih,
+    { simp, },
+    {
+      rw [finset.sum_range_succ, nat.succ_eq_add_one, ih],
+      cancel_denoms,
+      simp only [right_distrib, left_distrib, div_eq_mul_inv, nat.cast_add, nat.cast_one, 
+        one_mul, mul_one],
+      ring_nf,
+    },
+  end
+
+  theorem sum_k_mul_k_add_one_cube_0_124_2 (n : ℕ) :
+    ∑ (k : ℕ) in finset.range n, (↑k + (1 : ℝ)) * (k + 2) ^ 3 = ↑n / 60 * (n + 1) * (12 * n ^ 3 + 63 * n ^ 2 + 107 * n + 58) :=
+  begin
+    induction n with n ih,
+    { simp, },
+    {
+      rw [finset.sum_range_succ, nat.succ_eq_add_one, ih],
+      cancel_denoms,
+      simp only [right_distrib, left_distrib, div_eq_mul_inv, nat.cast_add, nat.cast_one, 
+        one_mul, mul_one],
+      ring_nf,
+    },
+  end
+
+  theorem sum_k_mul_k_fact_0_125 (n : ℕ) :
+    ∑ (k : ℕ) in finset.range n, (↑k : ℝ) * (nat.factorial k) = (nat.factorial n) - 1 :=
+  begin
+    induction n with n ih,
+    { simp, },
+    {
+      rw [finset.sum_range_succ, nat.succ_eq_add_one, ih, nat.factorial_succ],
+      simp only [right_distrib, left_distrib, div_eq_mul_inv, nat.cast_add, nat.cast_one, 
+        one_mul, mul_one, nat.cast_mul],
+      ring_nf,
+    }
+  end
+
+  -- TODO : 0_126
+
 end chapter0_1
 
 namespace chapter0_2
