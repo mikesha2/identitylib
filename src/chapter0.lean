@@ -79,7 +79,11 @@ namespace chapter0_1
     exact this,
   end
 
-
+  /-
+    An inelegant method of proving the derivatives except at 1 are equal for two functions
+    which agree except at 1.
+    TODO: I've written helper theorems in lemma0.lean which can simplify this argument.
+  -/
   @[simp] lemma deriv_except_at_one (n : ℕ) (q : ℝ) (h : q ≠ 1) :
       has_deriv_at (λ (x : ℝ), (finset.range n).sum (pow x)) 
         (∑ (k : ℕ) in finset.range n, power_rule.x_to_n' k q) q
@@ -178,6 +182,10 @@ namespace chapter0_1
     exact this,
   end
 
+  /- 
+    Proof through linearity of sums and differentiating both sides of the geometric series
+    equation. "Differentiating both sides" is equivalent to "the derivative is unique"
+  -/
   theorem arithmetic_geometric_progression_0_113 (n : ℕ) (a q r : ℝ) (h : q ≠ 1) :
     ∑ (k : ℕ) in finset.range (n + 1), ((a + k * r) * q ^ k) = 
       (a - (a + n * r) * q ^ (n + 1)) / (1 - q) + r * q * (1 - q ^ n) / (1 - q) ^ 2 :=
@@ -252,6 +260,8 @@ namespace chapter0_1
     rw [one_mul, add_left_inj, mul_comm (-q ^ n), pow_succ, ← mul_neg],
   end
 
+  /- Some weird combinations of casting natural numbers and 
+  multiplying that ring_nf has difficulty solving -/
   lemma k_squared_geometric_progression_algebra (x : ℝ) (n : ℕ) :
     -x ^ (n + 2) * ↑n * ↑n +
         (2 * x ^ (n + 1) * ↑n * ↑n +
@@ -303,6 +313,7 @@ namespace chapter0_1
       have trip := mul_ne_zero (mul_ne_zero h' h') h',
       rw mul_self_twice_eq_cube at trip,
 
+      -- Multiply both sides by (1 - x) ^ 3 (nonzero)
       have :
       (((-↑n ^ 2 + 2 * ↑n - 1) * x ^ (n + 2) + (2 * ↑n ^ 2 - 2 * ↑n - 1) * x ^ (n + 1) - ↑n ^ 2 * x ^ n + x ^ 2 +
          x) /
@@ -344,13 +355,15 @@ namespace chapter0_1
       have : n + 1 + 2 = n + 3, by linarith,
       rw this, clear this,
       ring_nf,
-      rw [add_left_inj],
+      rw add_left_inj,
       simp only [right_distrib, left_distrib, mul_sub_right_distrib, 
         mul_sub_left_distrib],
-      rw [add_left_inj],
+      rw add_left_inj,
       exact k_squared_geometric_progression_algebra x n,
     }
   end
-
-
 end chapter0_1
+
+namespace chapter0_2
+  
+end chapter0_2
