@@ -363,6 +363,105 @@ namespace chapter0_1
       exact k_squared_geometric_progression_algebra x n,
     }
   end
+
+  -- TODO: The general case sum_integers_0_121 with Bernoulli numbers
+
+  theorem sum_integers_0_121_1 (n : ℕ) :
+    ∑ (k : ℕ) in finset.range (n + 1), (↑k : ℝ) = ↑n * (n + 1) / 2 :=
+  begin
+    induction n with n ih,
+    { simp, },
+    {
+      rw [finset.sum_range_succ, nat.succ_eq_add_one, ih],
+      cancel_denoms,
+      simp only [right_distrib, left_distrib, div_eq_mul_inv, nat.cast_add, nat.cast_one],
+      ring_nf,
+    },
+  end
+
+  theorem sum_integers_0_121_2 (n : ℕ) :
+    ∑ (k : ℕ) in finset.range (n + 1), (↑k : ℝ) ^ 2 = (↑n * (n + 1) * (2 * n + 1)) / 6 :=
+  begin
+    induction n with n ih,
+    { simp, },
+    {
+      rw [finset.sum_range_succ, nat.succ_eq_add_one, ih],
+      cancel_denoms,
+      simp only [right_distrib, left_distrib, div_eq_mul_inv, nat.cast_add, nat.cast_one, 
+        one_mul, mul_one],
+      ring_nf,
+    },
+  end
+
+  theorem sum_integers_0_121_3 (n : ℕ) :
+    ∑ (k : ℕ) in finset.range (n + 1), (↑k : ℝ) ^ 3 = (n * (n + 1) / 2) ^ 2 :=
+  begin
+    induction n with n ih,
+    { simp, },
+    {
+      rw [finset.sum_range_succ, nat.succ_eq_add_one, ih],
+      cancel_denoms,
+      simp only [right_distrib, left_distrib, div_eq_mul_inv, nat.cast_add, nat.cast_one, 
+        one_mul, mul_one],
+      ring_nf,
+    },
+  end
+
+  theorem sum_integers_0_121_4 (n : ℕ) :
+    ∑ (k : ℕ) in finset.range (n + 1), (↑k : ℝ) ^ 4 = n * (n + 1) * (2 * n + 1) * (3 * n ^ 2 + 3 * n - 1) / 30 :=
+  begin
+    induction n with n ih,
+    { simp, },
+    {
+      rw [finset.sum_range_succ, nat.succ_eq_add_one, ih],
+      cancel_denoms,
+      simp only [right_distrib, left_distrib, div_eq_mul_inv, nat.cast_add, nat.cast_one, 
+        one_mul, mul_one],
+      ring_nf,
+    },
+  end
+
+  theorem sum_integers_0_121_5 (n : ℕ) :
+    ∑ (k : ℕ) in finset.range (n + 1), (↑k : ℝ) ^ 5 = n ^ 2 * (n + 1) ^ 2 * (2 * n ^ 2 + 2 * n - 1) / 12 :=
+  begin
+    induction n with n ih,
+    { simp, },
+    {
+      rw [finset.sum_range_succ, nat.succ_eq_add_one, ih],
+      cancel_denoms,
+      simp only [right_distrib, left_distrib, div_eq_mul_inv, nat.cast_add, nat.cast_one, 
+        one_mul, mul_one],
+      ring_nf,
+    },
+  end
+  
+  theorem sum_integers_0_121_6 (n : ℕ) :
+    ∑ (k : ℕ) in finset.range (n + 1), (↑k : ℝ) ^ 6 = n * (n + 1) * (2 * n + 1) * (3 * n ^ 4 + 6 * n ^ 3 - 3 * n + 1) / 42 :=
+  begin
+    induction n with n ih,
+    { simp, },
+    {
+      rw [finset.sum_range_succ, nat.succ_eq_add_one, ih],
+      cancel_denoms,
+      simp only [right_distrib, left_distrib, div_eq_mul_inv, nat.cast_add, nat.cast_one, 
+        one_mul, mul_one],
+      ring_nf,
+    },
+  end
+
+  theorem sum_integers_0_121_7 (n : ℕ) :
+    ∑ (k : ℕ) in finset.range (n + 1), (↑k : ℝ) ^ 7 = n ^ 2 * (n + 1) ^ 2 * (3 * n ^ 4 + 6 * n ^ 3 - n ^ 2 - 4 * n + 2) / 24 :=
+  begin
+    induction n with n ih,
+    { simp, },
+    {
+      rw [finset.sum_range_succ, nat.succ_eq_add_one, ih],
+      cancel_denoms,
+      simp only [right_distrib, left_distrib, div_eq_mul_inv, nat.cast_add, nat.cast_one, 
+        one_mul, mul_one],
+      ring_nf,
+    },
+  end
 end chapter0_1
 
 namespace chapter0_2
