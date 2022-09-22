@@ -313,7 +313,8 @@ namespace chapter0_1
       have trip := mul_ne_zero (mul_ne_zero h' h') h',
       rw mul_self_twice_eq_cube at trip,
 
-      -- Multiply both sides by (1 - x) ^ 3 (nonzero)
+      -- Multiply both sides by (1 - x) ^ 3 (nonzero). 
+      -- TODO: replace this with easier to use multiply_both_sides_by_ne_zero (lemma0.lean)
       have :
       (((-↑n ^ 2 + 2 * ↑n - 1) * x ^ (n + 2) + (2 * ↑n ^ 2 - 2 * ↑n - 1) * x ^ (n + 1) - ↑n ^ 2 * x ^ n + x ^ 2 +
          x) /
@@ -329,7 +330,7 @@ namespace chapter0_1
           x) /
         (1 - x) ^ 3 +
       ↑n ^ 2 * x ^ n =
-    ((-↑(n + 1) ^ 2 + 2 * ↑(n + 1) - 1) * x ^ (n + 1 + 2) +
+      ((-↑(n + 1) ^ 2 + 2 * ↑(n + 1) - 1) * x ^ (n + 1 + 2) +
               (2 * ↑(n + 1) ^ 2 - 2 * ↑(n + 1) - 1) * x ^ (n + 1 + 1) -
             ↑(n + 1) ^ 2 * x ^ (n + 1) +
           x ^ 2 +
@@ -365,5 +366,5 @@ namespace chapter0_1
 end chapter0_1
 
 namespace chapter0_2
-  
+
 end chapter0_2

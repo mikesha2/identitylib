@@ -766,3 +766,10 @@ begin
     },
   }
 end
+
+lemma multiply_both_sides_by_ne_zero {a b c : ℝ} : (a = c) → (b ≠ 0) → a * b = c * b :=
+begin
+  intros p q,
+  rw mul_right_cancel_iff_ne_zero q,
+  exact p,
+end
