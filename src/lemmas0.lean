@@ -773,3 +773,9 @@ begin
   rw mul_right_cancel_iff_ne_zero q,
   exact p,
 end
+
+lemma mul_consecutive_nats_even (n : ℕ) : 2 ∣ n * (n + 1) :=
+begin
+  have := nat.even_mul_succ_self n,
+  exact (even_iff_two_dvd.mp) this,
+end

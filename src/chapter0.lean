@@ -462,6 +462,119 @@ namespace chapter0_1
       ring_nf,
     },
   end
+
+  -- convert proof over ℝ to proof over ℕ, if desired
+  theorem convert_proof_real_to_nat (n : ℕ) (f g : ℕ → ℕ) :
+    ∑ (k : ℕ) in finset.range (n + 1), (↑(f k) : ℝ) = ↑(g n) →
+    ∑ (k : ℕ) in finset.range (n + 1), f k = g n :=
+  begin
+    intro p,
+    rw ← nat.cast_sum (finset.range (n + 1)) f at p,
+    rw nat.cast_inj at p,
+    assumption,
+  end
+
+  /- All the above proofs using reals may be turned into proofs on nats. -/
+  lemma sum_integers_0_121_1_nat (n : ℕ) : 
+    ∑ (k : ℕ) in finset.range (n + 1), (k : ℝ) = n * (n + 1) / 2 :=
+  begin
+    have a := sum_integers_0_121_1 n,
+    have b := convert_proof_real_to_nat n (λ (k : ℕ), k) (λ (n : ℕ), n * (n + 1) / 2),
+    simp at b,
+    rw nat.cast_div at b,
+    { exact a, },
+    { exact mul_consecutive_nats_even n, },
+    { norm_num, },
+  end
+
+  -- TODO: sum_2k_sub_one_0_122 with Bernoulli numbers
+
+  theorem sum_2k_sub_one_0_122_1 (n : ℕ) : 
+    ∑ (k : ℕ) in finset.range n, (↑2 * (k + 1) - 1 : ℝ) = ↑n ^ 2 :=
+  begin
+    induction n with n ih,
+    { simp, },
+    {
+      rw [finset.sum_range_succ, nat.succ_eq_add_one, ih],
+      cancel_denoms,
+      simp only [right_distrib, left_distrib, div_eq_mul_inv, nat.cast_add, nat.cast_one, 
+        one_mul, mul_one],
+      ring_nf,
+    },
+  end
+
+  theorem sum_2k_sub_one_0_122_2 (n : ℕ) : 
+    ∑ (k : ℕ) in finset.range n, (↑2 * (k + 1) - 1 : ℝ) ^ 2 = ↑n * (4 * n ^ 2 - 1) / 3 :=
+  begin
+    induction n with n ih,
+    { simp, },
+    {
+      rw [finset.sum_range_succ, nat.succ_eq_add_one, ih],
+      cancel_denoms,
+      simp only [right_distrib, left_distrib, div_eq_mul_inv, nat.cast_add, nat.cast_one, 
+        one_mul, mul_one],
+      ring_nf,
+    },
+  end
+
+  theorem sum_2k_sub_one_0_122_3 (n : ℕ) : 
+    ∑ (k : ℕ) in finset.range n, (↑2 * (k + 1) - 1 : ℝ) ^ 3 = ↑n ^ 2 * (2 * n ^ 2 - 1) :=
+  begin
+    induction n with n ih,
+    { simp, },
+    {
+      rw [finset.sum_range_succ, nat.succ_eq_add_one, ih],
+      cancel_denoms,
+      simp only [right_distrib, left_distrib, div_eq_mul_inv, nat.cast_add, nat.cast_one, 
+        one_mul, mul_one],
+      ring_nf,
+    },
+  end
+
+  theorem sum_mk_sub_one_0_122_4 (m n : ℕ) :
+    ∑ (k : ℕ) in finset.range n, (↑m * (k + 1) - 1 : ℝ) = ↑n / 2 * (m * (n + 1) - 2) :=
+  begin
+    induction n with n ih,
+    { simp, },
+    {
+      rw [finset.sum_range_succ, nat.succ_eq_add_one, ih],
+      cancel_denoms,
+      simp only [right_distrib, left_distrib, div_eq_mul_inv, nat.cast_add, nat.cast_one, 
+        one_mul, mul_one],
+      ring_nf,
+    },
+  end
+
+  theorem sum_mk_sub_one_0_122_5 (m n : ℕ) :
+    ∑ (k : ℕ) in finset.range n, (↑m * (k + 1) - 1 : ℝ) ^ 2 = 
+    ↑n / 6 * (m ^ 2 * (n + 1) * (2 * n + 1) - 6 * m * (n + 1)+ 6) :=
+  begin
+    induction n with n ih,
+    { simp, },
+    {
+      rw [finset.sum_range_succ, nat.succ_eq_add_one, ih],
+      cancel_denoms,
+      simp only [right_distrib, left_distrib, div_eq_mul_inv, nat.cast_add, nat.cast_one, 
+        one_mul, mul_one],
+      ring_nf,
+    },
+  end
+
+  theorem sum_mk_sub_one_0_122_6 (m n : ℕ) :
+    ∑ (k : ℕ) in finset.range n, (↑m * (k + 1) - 1 : ℝ) ^ 3 = 
+    ↑n / 4 * (m ^ 3 * n * (n + 1) ^ 2 - 2 * m ^ 2 * (n + 1) * (2 * n + 1) + 6 * m * (n + 1) - 4) :=
+  begin
+    induction n with n ih,
+    { simp, },
+    {
+      rw [finset.sum_range_succ, nat.succ_eq_add_one, ih],
+      cancel_denoms,
+      simp only [right_distrib, left_distrib, div_eq_mul_inv, nat.cast_add, nat.cast_one, 
+        one_mul, mul_one],
+      ring_nf,
+    },
+  end
+
 end chapter0_1
 
 namespace chapter0_2
