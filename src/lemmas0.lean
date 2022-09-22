@@ -730,3 +730,39 @@ begin
   intros p q,
   ring_nf,
 end
+
+lemma mul_right_cancel_iff_ne_zero {a b c : ℝ} (h : b ≠ 0) : a * b = c * b ↔ a = c :=
+begin
+  rw ne_iff_lt_or_gt at h,
+  cases h,
+  {
+    split,
+    {
+      intro p,
+      have : 0 < -b, by linarith,
+      rw [← neg_neg b, mul_neg, mul_neg c, ← neg_mul, ← neg_mul] at p,
+      rw (mul_right_cancel_iff_of_pos this) at p,
+      rw neg_eq_iff_neg_eq at p,
+      rw neg_neg at p,
+      symmetry,
+      exact p,
+    },
+    {
+      intro p,
+      rw p,
+    },
+  },
+  {
+    split,
+    {
+      intro p,
+      have : 0 < b, by linarith,
+      rw (mul_right_cancel_iff_of_pos this) at p,
+      exact p,
+    },
+    {
+      intro p,
+      rw p,
+    },
+  }
+end
