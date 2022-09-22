@@ -285,6 +285,10 @@ namespace chapter0_1
     ring_nf,
   end
 
+  /-
+    Surprisingly, though the calculus proof (differentiating the geometric series twice)
+    is easier to follow on paper, the induction proof has far less tedious algebra.
+  -/
   theorem k_squared_geometric_progression_0_114 (n : ℕ) (x : ℝ) (h : x ≠ 1) :
     ∑ (k : ℕ) in finset.range n, ↑k ^ 2 * x ^ k =
     ((-n ^ 2 + 2 * n - 1) * x ^ (n + 2) + (2 * n ^ 2 - 2 * n - 1) * x ^ (n + 1) 
@@ -344,7 +348,7 @@ namespace chapter0_1
       simp only [right_distrib, left_distrib, mul_sub_right_distrib, 
         mul_sub_left_distrib],
       rw [add_left_inj],
-      exact k_squared_geometric_progression_algebra n x,
+      exact k_squared_geometric_progression_algebra x n,
     }
   end
 
