@@ -18,7 +18,7 @@ import power_rule
 
 open_locale big_operators
 
-lemma ne_zero_iff_sub_ne_zero (a b : ℝ) : a ≠ b ↔ a - b ≠ 0 :=
+lemma ne_zero_iff_sub_ne_zero {a b : ℝ} : a ≠ b ↔ a - b ≠ 0 :=
 begin
   split;
   intro p,
@@ -35,7 +35,7 @@ begin
   },
 end
 
-lemma sub_ne_zero_iff_sub_ne_zero (a b : ℝ) : a - b ≠ 0 ↔ b - a ≠ 0 :=
+lemma sub_ne_zero_iff_sub_ne_zero {a b : ℝ} : a - b ≠ 0 ↔ b - a ≠ 0 :=
 begin
   split;
   intro h₁;
@@ -475,7 +475,7 @@ begin
   have b := second_derivative_uniqueness_term_4 n x,
   replace a := has_deriv_at.sub a b,
   replace b := second_derivative_uniqueness_term_5 n x,
-  have := (ne_zero_iff_sub_ne_zero x 1).1 h,
+  have := (ne_zero_iff_sub_ne_zero).1 h,
   replace := mul_ne_zero this this,
   rw mul_self_eq_square at this,
   have := has_deriv_at.div a b this,
