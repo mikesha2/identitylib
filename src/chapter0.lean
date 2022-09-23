@@ -166,12 +166,7 @@ namespace chapter0_1
 
   lemma deriv_of_geometric_rv (n : ℕ) (x : ℝ) (h : x ≠ 1):
     ((↑n + 1) * x ^ n * (x - 1) - (x ^ (n + 1) - 1)) / (x - 1) ^ 2 =
-    ∑ (k : ℕ) in finset.range n, (↑k + 1) * x ^ k :=
-  begin
-    have := deriv_of_geometric n x h,
-    symmetry,
-    exact this,
-  end
+    ∑ (k : ℕ) in finset.range n, (↑k + 1) * x ^ k := (deriv_of_geometric n x h).symm
 
   /- 
     Proof through linearity of sums and differentiating both sides of the geometric series
