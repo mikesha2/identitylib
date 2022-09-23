@@ -405,7 +405,7 @@ namespace chapter0_1
   @[simp] lemma sum_integers_0_121_1_nat {n : ℕ} : 
     ∑ (k : ℕ) in finset.range (n + 1), (k : ℝ) = n * (n + 1) / 2 :=
   begin
-    have a := sum_integers_0_121_1 n,
+    have a := sum_integers_0_121_1,
     have b := convert_proof_real_to_nat n (λ (k : ℕ), k) (λ (n : ℕ), n * (n + 1) / 2),
     simp at b,
     rw nat.cast_div at b,
