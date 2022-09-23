@@ -317,8 +317,9 @@ namespace chapter0_1
     }
   end
 
-  -- TODO: The general case sum_integers_0_121 with Bernoulli numbers
-
+  /-
+    Sums of powers of integers
+  -/
   @[simp] theorem sum_integers_0_121_1 {n : ℕ} :
     ∑ (k : ℕ) in finset.range (n + 1), (↑k : ℝ) = ↑n * (n + 1) / 2 :=
   begin
@@ -388,6 +389,10 @@ namespace chapter0_1
       simp, ring,
     },
   end
+
+
+  -- TODO: The general case sum_integers_0_121 with Bernoulli numbers
+  
 
   -- convert proof over ℝ to proof over ℕ, if desired
   theorem convert_proof_real_to_nat (n : ℕ) (f g : ℕ → ℕ) :
