@@ -177,7 +177,7 @@ namespace chapter0_1
     Proof through linearity of sums and differentiating both sides of the geometric series
     equation. "Differentiating both sides" is equivalent to "the derivative is unique"
   -/
-  theorem arithmetic_geometric_progression_0_113 (n : ℕ) (a q r : ℝ) (h : q ≠ 1) :
+  theorem arithmetic_geometric_progression_0_113 {n : ℕ} {a q r : ℝ} (h : q ≠ 1) :
     ∑ (k : ℕ) in finset.range (n + 1), ((a + k * r) * q ^ k) = 
       (a - (a + n * r) * q ^ (n + 1)) / (1 - q) + r * q * (1 - q ^ n) / (1 - q) ^ 2 :=
   begin
@@ -256,7 +256,7 @@ namespace chapter0_1
     Surprisingly, though the calculus proof (differentiating the geometric series twice)
     is easier to follow on paper, the induction proof has far less tedious algebra.
   -/
-  theorem k_squared_geometric_progression_0_114 (n : ℕ) (x : ℝ) (h : x ≠ 1) :
+  theorem k_squared_geometric_progression_0_114 {n : ℕ} {x : ℝ} (h : x ≠ 1) :
     ∑ (k : ℕ) in finset.range n, ↑k ^ 2 * x ^ k =
     ((-n ^ 2 + 2 * n - 1) * x ^ (n + 2) + (2 * n ^ 2 - 2 * n - 1) * x ^ (n + 1) 
     - n ^ 2 * x ^ n + x ^ 2 + x) / (1 - x) ^ 3 :=
