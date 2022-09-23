@@ -491,7 +491,7 @@ namespace chapter0_1
   theorem sum_k_mul_n_sq_sub_k_sq_0_124_1 (q n k : ℕ) :
     ∑ (k : ℕ) in finset.range q, (↑k + (1 : ℝ)) * (n ^ 2 - (k + 1) ^ 2) = q / 4 * (q + 1) * (2 * n ^ 2 - q ^ 2 - q) :=
   begin
-    induction n with n ih,
+    induction q with q ih,
     { simp, },
     { rw [finset.sum_range_succ, ih],
       simp, ring,
