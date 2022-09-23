@@ -320,7 +320,7 @@ namespace chapter0_1
 
   -- TODO: The general case sum_integers_0_121 with Bernoulli numbers
 
-  theorem sum_integers_0_121_1 (n : ℕ) :
+  @[simp] theorem sum_integers_0_121_1 {n : ℕ} :
     ∑ (k : ℕ) in finset.range (n + 1), (↑k : ℝ) = ↑n * (n + 1) / 2 :=
   begin
     induction n with n ih,
@@ -330,7 +330,7 @@ namespace chapter0_1
     },
   end
 
-  theorem sum_integers_0_121_2 (n : ℕ) :
+  @[simp] theorem sum_integers_0_121_2 {n : ℕ} :
     ∑ (k : ℕ) in finset.range (n + 1), (↑k : ℝ) ^ 2 = (↑n * (n + 1) * (2 * n + 1)) / 6 :=
   begin
     induction n with n ih,
@@ -340,7 +340,7 @@ namespace chapter0_1
     },
   end
 
-  theorem sum_integers_0_121_3 (n : ℕ) :
+  @[simp] theorem sum_integers_0_121_3 {n : ℕ} :
     ∑ (k : ℕ) in finset.range (n + 1), (↑k : ℝ) ^ 3 = (n * (n + 1) / 2) ^ 2 :=
   begin
     induction n with n ih,
@@ -350,7 +350,7 @@ namespace chapter0_1
     },
   end
 
-  theorem sum_integers_0_121_4 (n : ℕ) :
+  @[simp] theorem sum_integers_0_121_4 {n : ℕ} :
     ∑ (k : ℕ) in finset.range (n + 1), (↑k : ℝ) ^ 4 = n * (n + 1) * (2 * n + 1) * (3 * n ^ 2 + 3 * n - 1) / 30 :=
   begin
     induction n with n ih,
@@ -360,7 +360,7 @@ namespace chapter0_1
     },
   end
 
-  theorem sum_integers_0_121_5 (n : ℕ) :
+  @[simp] theorem sum_integers_0_121_5 {n : ℕ} :
     ∑ (k : ℕ) in finset.range (n + 1), (↑k : ℝ) ^ 5 = n ^ 2 * (n + 1) ^ 2 * (2 * n ^ 2 + 2 * n - 1) / 12 :=
   begin
     induction n with n ih,
@@ -370,7 +370,7 @@ namespace chapter0_1
     },
   end
   
-  theorem sum_integers_0_121_6 (n : ℕ) :
+  @[simp] theorem sum_integers_0_121_6 {n : ℕ} :
     ∑ (k : ℕ) in finset.range (n + 1), (↑k : ℝ) ^ 6 = n * (n + 1) * (2 * n + 1) * (3 * n ^ 4 + 6 * n ^ 3 - 3 * n + 1) / 42 :=
   begin
     induction n with n ih,
@@ -380,7 +380,7 @@ namespace chapter0_1
     },
   end
 
-  theorem sum_integers_0_121_7 (n : ℕ) :
+  @[simp] theorem sum_integers_0_121_7 {n : ℕ} :
     ∑ (k : ℕ) in finset.range (n + 1), (↑k : ℝ) ^ 7 = n ^ 2 * (n + 1) ^ 2 * (3 * n ^ 4 + 6 * n ^ 3 - n ^ 2 - 4 * n + 2) / 24 :=
   begin
     induction n with n ih,
@@ -402,7 +402,7 @@ namespace chapter0_1
   end
 
   /- All the above proofs using reals may be turned into proofs on nats. -/
-  lemma sum_integers_0_121_1_nat (n : ℕ) : 
+  @[simp] lemma sum_integers_0_121_1_nat {n : ℕ} : 
     ∑ (k : ℕ) in finset.range (n + 1), (k : ℝ) = n * (n + 1) / 2 :=
   begin
     have a := sum_integers_0_121_1 n,
@@ -416,7 +416,7 @@ namespace chapter0_1
 
   -- TODO: sum_2k_sub_one_0_122 with Bernoulli numbers
 
-  theorem sum_2k_sub_one_0_122_1 (n : ℕ) : 
+  @[simp] theorem sum_2k_sub_one_0_122_1 {n : ℕ} : 
     ∑ (k : ℕ) in finset.range n, (↑2 * (k + 1) - 1 : ℝ) = ↑n ^ 2 :=
   begin
     induction n with n ih,
@@ -426,7 +426,7 @@ namespace chapter0_1
     },
   end
 
-  theorem sum_2k_sub_one_0_122_2 (n : ℕ) : 
+  @[simp] theorem sum_2k_sub_one_0_122_2 {n : ℕ} : 
     ∑ (k : ℕ) in finset.range n, (↑2 * (k + 1) - 1 : ℝ) ^ 2 = ↑n * (4 * n ^ 2 - 1) / 3 :=
   begin
     induction n with n ih,
@@ -436,7 +436,7 @@ namespace chapter0_1
     },
   end
 
-  theorem sum_2k_sub_one_0_122_3 (n : ℕ) : 
+  @[simp] theorem sum_2k_sub_one_0_122_3 {n : ℕ} : 
     ∑ (k : ℕ) in finset.range n, (↑2 * (k + 1) - 1 : ℝ) ^ 3 = ↑n ^ 2 * (2 * n ^ 2 - 1) :=
   begin
     induction n with n ih,
@@ -446,7 +446,7 @@ namespace chapter0_1
     },
   end
 
-  theorem sum_mk_sub_one_0_122_4 (m n : ℕ) :
+  @[simp] theorem sum_mk_sub_one_0_122_4 {m n : ℕ} :
     ∑ (k : ℕ) in finset.range n, (↑m * (k + 1) - 1 : ℝ) = ↑n / 2 * (m * (n + 1) - 2) :=
   begin
     induction n with n ih,
@@ -456,7 +456,7 @@ namespace chapter0_1
     },
   end
 
-  theorem sum_mk_sub_one_0_122_5 (m n : ℕ) :
+  @[simp] theorem sum_mk_sub_one_0_122_5 {m n : ℕ} :
     ∑ (k : ℕ) in finset.range n, (↑m * (k + 1) - 1 : ℝ) ^ 2 = 
     ↑n / 6 * (m ^ 2 * (n + 1) * (2 * n + 1) - 6 * m * (n + 1)+ 6) :=
   begin
@@ -467,7 +467,7 @@ namespace chapter0_1
     },
   end
 
-  theorem sum_mk_sub_one_0_122_6 (m n : ℕ) :
+  @[simp] theorem sum_mk_sub_one_0_122_6 {m n : ℕ} :
     ∑ (k : ℕ) in finset.range n, (↑m * (k + 1) - 1 : ℝ) ^ 3 = 
     ↑n / 4 * (m ^ 3 * n * (n + 1) ^ 2 - 2 * m ^ 2 * (n + 1) * (2 * n + 1) + 6 * m * (n + 1) - 4) :=
   begin
@@ -478,7 +478,7 @@ namespace chapter0_1
     },
   end
 
-  theorem sum_k_mul_k_add_one_sq_0_123 (n : ℕ) :
+  @[simp] theorem sum_k_mul_k_add_one_sq_0_123 {n : ℕ} :
     ∑ (k : ℕ) in finset.range n, (↑k + (1 : ℝ)) * (k + 2) ^ 2 = ↑n / 12 * (n + 1) * (n + 2) * (3 * n + 5) :=
   begin
     induction n with n ih,
@@ -498,7 +498,7 @@ namespace chapter0_1
     },
   end
 
-  theorem sum_k_mul_k_add_one_cube_0_124_2 (n : ℕ) :
+  @[simp] theorem sum_k_mul_k_add_one_cube_0_124_2 {n : ℕ} :
     ∑ (k : ℕ) in finset.range n, (↑k + (1 : ℝ)) * (k + 2) ^ 3 = ↑n / 60 * (n + 1) * (12 * n ^ 3 + 63 * n ^ 2 + 107 * n + 58) :=
   begin
     induction n with n ih,
@@ -508,7 +508,7 @@ namespace chapter0_1
     },
   end
 
-  theorem sum_k_mul_k_fact_0_125 (n : ℕ) :
+  @[simp] theorem sum_k_mul_k_fact_0_125 {n : ℕ} :
     ∑ (k : ℕ) in finset.range n, (↑k : ℝ) * (nat.factorial k) = (nat.factorial n) - 1 :=
   begin
     induction n with n ih,
