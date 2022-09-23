@@ -30,22 +30,13 @@ open_locale big_operators
 
 /- Chapter 0.1: Finite sums -/
 namespace chapter0_1
-  @[simp] theorem arithmetic_progression_0_111 (n : ℕ) (a r : ℝ) : 
+  @[simp] theorem arithmetic_progression_0_111 (n : ℕ) (a r : ℝ) :
     ∑ (k : ℕ) in finset.range n, (a + k * r) = n * (a + (n - 1) * r / 2) :=
   begin
     induction n with n ih,
     { simp, },
-    {
-      rw [finset.sum_range_succ, ih, nat.succ_eq_add_one, 
-        mul_sub_right_distrib, one_mul],
-      simp,
-      repeat {rw left_distrib},
-      rw [right_distrib, right_distrib, add_assoc,
-        one_mul, one_mul, div_eq_mul_inv, div_eq_mul_inv, 
-        mul_sub_right_distrib, mul_sub_left_distrib],
-      repeat {rw right_distrib},
-      repeat {rw left_distrib},
-      ring_nf,
+    { rw [finset.sum_range_succ, ih],
+      simp, ring,
     },
   end
 
@@ -65,9 +56,7 @@ namespace chapter0_1
       nth_rewrite_lhs 1 ← mul_one (a * q ^ n),
       nth_rewrite_lhs 2 ← this,
       rw ← mul_assoc (a * q ^ n),
-      repeat {rw mul_sub_left_distrib},
-      repeat {rw mul_sub_right_distrib},
-      ring_nf,
+      ring_exp,
     },
   end
 
@@ -260,41 +249,6 @@ namespace chapter0_1
     rw [one_mul, add_left_inj, mul_comm (-q ^ n), pow_succ, ← mul_neg],
   end
 
-  /- Some weird combinations of casting natural numbers and 
-  multiplying that ring_nf has difficulty solving -/
-  lemma k_squared_geometric_progression_algebra (x : ℝ) (n : ℕ) :
-    -x ^ (n + 2) * ↑n * ↑n +
-        (2 * x ^ (n + 1) * ↑n * ↑n +
-          (-x * x * x * x ^ n * ↑n * ↑n + 3 * x * x * x ^ n * ↑n * ↑n -
-              3 * x * x ^ n * ↑n * ↑n)) =
-      2 * x ^ (n + 2) * ↑n * ↑n +
-        (-x ^ (n + 1) * ↑n * ↑n - x ^ (n + 3) * ↑n * ↑n) :=
-  begin
-    have : -x ^ (n + 2) * ↑n * ↑n = -(↑n) ^ 2 * x ^ (n + 2), by ring_nf,
-    rw this, clear this,
-    have : 2 * x ^ (n + 1) * ↑n * ↑n = 2 * (↑n) ^ 2 * x ^ (n + 1), by ring_nf,
-    rw this, clear this,
-    have : -x * x * x * x ^ n * ↑n * ↑n = -(↑n) ^ 2 * x ^ (n + 3) :=
-    begin
-      repeat {rw pow_succ},
-      ring_nf,
-    end,
-    rw this, clear this,
-    have : 3 * x * x * x ^ n * ↑n * ↑n = 3 * (↑n) ^ 2 * x ^ (n + 2) :=
-    begin
-      repeat {rw pow_succ},
-      ring_nf,
-    end,
-    rw this, clear this,
-    have : 3 * x * x ^ n * ↑n * ↑n = 3 * (↑n) ^ 2 * x ^ (n + 1) :=
-    begin
-      rw [mul_assoc, mul_assoc, mul_assoc, ← mul_assoc x, ← pow_succ],
-      ring_nf,
-    end,
-    rw this, clear this,
-    ring_nf,
-  end
-
   /-
     Surprisingly, though the calculus proof (differentiating the geometric series twice)
     is easier to follow on paper, the induction proof has far less tedious algebra.
@@ -360,7 +314,7 @@ namespace chapter0_1
       simp only [right_distrib, left_distrib, mul_sub_right_distrib, 
         mul_sub_left_distrib],
       rw add_left_inj,
-      exact k_squared_geometric_progression_algebra x n,
+      ring_exp,
     }
   end
 
@@ -371,11 +325,8 @@ namespace chapter0_1
   begin
     induction n with n ih,
     { simp, },
-    {
-      rw [finset.sum_range_succ, nat.succ_eq_add_one, ih],
-      cancel_denoms,
-      simp only [right_distrib, left_distrib, div_eq_mul_inv, nat.cast_add, nat.cast_one],
-      ring_nf,
+    { rw [finset.sum_range_succ, ih],
+      simp, ring,
     },
   end
 
@@ -384,12 +335,8 @@ namespace chapter0_1
   begin
     induction n with n ih,
     { simp, },
-    {
-      rw [finset.sum_range_succ, nat.succ_eq_add_one, ih],
-      cancel_denoms,
-      simp only [right_distrib, left_distrib, div_eq_mul_inv, nat.cast_add, nat.cast_one, 
-        one_mul, mul_one],
-      ring_nf,
+    { rw [finset.sum_range_succ, ih],
+      simp, ring,
     },
   end
 
@@ -398,12 +345,8 @@ namespace chapter0_1
   begin
     induction n with n ih,
     { simp, },
-    {
-      rw [finset.sum_range_succ, nat.succ_eq_add_one, ih],
-      cancel_denoms,
-      simp only [right_distrib, left_distrib, div_eq_mul_inv, nat.cast_add, nat.cast_one, 
-        one_mul, mul_one],
-      ring_nf,
+    { rw [finset.sum_range_succ, ih],
+      simp, ring,
     },
   end
 
@@ -412,12 +355,8 @@ namespace chapter0_1
   begin
     induction n with n ih,
     { simp, },
-    {
-      rw [finset.sum_range_succ, nat.succ_eq_add_one, ih],
-      cancel_denoms,
-      simp only [right_distrib, left_distrib, div_eq_mul_inv, nat.cast_add, nat.cast_one, 
-        one_mul, mul_one],
-      ring_nf,
+    { rw [finset.sum_range_succ, ih],
+      simp, ring,
     },
   end
 
@@ -426,12 +365,8 @@ namespace chapter0_1
   begin
     induction n with n ih,
     { simp, },
-    {
-      rw [finset.sum_range_succ, nat.succ_eq_add_one, ih],
-      cancel_denoms,
-      simp only [right_distrib, left_distrib, div_eq_mul_inv, nat.cast_add, nat.cast_one, 
-        one_mul, mul_one],
-      ring_nf,
+    { rw [finset.sum_range_succ, ih],
+      simp, ring,
     },
   end
   
@@ -440,12 +375,8 @@ namespace chapter0_1
   begin
     induction n with n ih,
     { simp, },
-    {
-      rw [finset.sum_range_succ, nat.succ_eq_add_one, ih],
-      cancel_denoms,
-      simp only [right_distrib, left_distrib, div_eq_mul_inv, nat.cast_add, nat.cast_one, 
-        one_mul, mul_one],
-      ring_nf,
+    { rw [finset.sum_range_succ, ih],
+      simp, ring,
     },
   end
 
@@ -454,12 +385,8 @@ namespace chapter0_1
   begin
     induction n with n ih,
     { simp, },
-    {
-      rw [finset.sum_range_succ, nat.succ_eq_add_one, ih],
-      cancel_denoms,
-      simp only [right_distrib, left_distrib, div_eq_mul_inv, nat.cast_add, nat.cast_one, 
-        one_mul, mul_one],
-      ring_nf,
+    { rw [finset.sum_range_succ, ih],
+      simp, ring,
     },
   end
 
@@ -494,12 +421,8 @@ namespace chapter0_1
   begin
     induction n with n ih,
     { simp, },
-    {
-      rw [finset.sum_range_succ, nat.succ_eq_add_one, ih],
-      cancel_denoms,
-      simp only [right_distrib, left_distrib, div_eq_mul_inv, nat.cast_add, nat.cast_one, 
-        one_mul, mul_one],
-      ring_nf,
+    { rw [finset.sum_range_succ, ih],
+      simp, ring,
     },
   end
 
@@ -508,12 +431,8 @@ namespace chapter0_1
   begin
     induction n with n ih,
     { simp, },
-    {
-      rw [finset.sum_range_succ, nat.succ_eq_add_one, ih],
-      cancel_denoms,
-      simp only [right_distrib, left_distrib, div_eq_mul_inv, nat.cast_add, nat.cast_one, 
-        one_mul, mul_one],
-      ring_nf,
+    { rw [finset.sum_range_succ, ih],
+      simp, ring,
     },
   end
 
@@ -522,12 +441,8 @@ namespace chapter0_1
   begin
     induction n with n ih,
     { simp, },
-    {
-      rw [finset.sum_range_succ, nat.succ_eq_add_one, ih],
-      cancel_denoms,
-      simp only [right_distrib, left_distrib, div_eq_mul_inv, nat.cast_add, nat.cast_one, 
-        one_mul, mul_one],
-      ring_nf,
+    { rw [finset.sum_range_succ, ih],
+      simp, ring,
     },
   end
 
@@ -536,12 +451,8 @@ namespace chapter0_1
   begin
     induction n with n ih,
     { simp, },
-    {
-      rw [finset.sum_range_succ, nat.succ_eq_add_one, ih],
-      cancel_denoms,
-      simp only [right_distrib, left_distrib, div_eq_mul_inv, nat.cast_add, nat.cast_one, 
-        one_mul, mul_one],
-      ring_nf,
+    { rw [finset.sum_range_succ, ih],
+      simp, ring,
     },
   end
 
@@ -551,12 +462,8 @@ namespace chapter0_1
   begin
     induction n with n ih,
     { simp, },
-    {
-      rw [finset.sum_range_succ, nat.succ_eq_add_one, ih],
-      cancel_denoms,
-      simp only [right_distrib, left_distrib, div_eq_mul_inv, nat.cast_add, nat.cast_one, 
-        one_mul, mul_one],
-      ring_nf,
+    { rw [finset.sum_range_succ, ih],
+      simp, ring,
     },
   end
 
@@ -566,12 +473,8 @@ namespace chapter0_1
   begin
     induction n with n ih,
     { simp, },
-    {
-      rw [finset.sum_range_succ, nat.succ_eq_add_one, ih],
-      cancel_denoms,
-      simp only [right_distrib, left_distrib, div_eq_mul_inv, nat.cast_add, nat.cast_one, 
-        one_mul, mul_one],
-      ring_nf,
+    { rw [finset.sum_range_succ, ih],
+      simp, ring,
     },
   end
 
@@ -580,26 +483,18 @@ namespace chapter0_1
   begin
     induction n with n ih,
     { simp, },
-    {
-      rw [finset.sum_range_succ, nat.succ_eq_add_one, ih],
-      cancel_denoms,
-      simp only [right_distrib, left_distrib, div_eq_mul_inv, nat.cast_add, nat.cast_one, 
-        one_mul, mul_one],
-      ring_nf,
+    { rw [finset.sum_range_succ, ih],
+      simp, ring,
     },
   end
 
   theorem sum_k_mul_n_sq_sub_k_sq_0_124_1 (q n k : ℕ) :
     ∑ (k : ℕ) in finset.range q, (↑k + (1 : ℝ)) * (n ^ 2 - (k + 1) ^ 2) = q / 4 * (q + 1) * (2 * n ^ 2 - q ^ 2 - q) :=
   begin
-    induction q with q ih,
+    induction n with n ih,
     { simp, },
-    {
-      rw [finset.sum_range_succ, nat.succ_eq_add_one, ih],
-      cancel_denoms,
-      simp only [right_distrib, left_distrib, div_eq_mul_inv, nat.cast_add, nat.cast_one, 
-        one_mul, mul_one],
-      ring_nf,
+    { rw [finset.sum_range_succ, ih],
+      simp, ring,
     },
   end
 
@@ -608,12 +503,8 @@ namespace chapter0_1
   begin
     induction n with n ih,
     { simp, },
-    {
-      rw [finset.sum_range_succ, nat.succ_eq_add_one, ih],
-      cancel_denoms,
-      simp only [right_distrib, left_distrib, div_eq_mul_inv, nat.cast_add, nat.cast_one, 
-        one_mul, mul_one],
-      ring_nf,
+    { rw [finset.sum_range_succ, ih],
+      simp, ring,
     },
   end
 
@@ -622,12 +513,9 @@ namespace chapter0_1
   begin
     induction n with n ih,
     { simp, },
-    {
-      rw [finset.sum_range_succ, nat.succ_eq_add_one, ih, nat.factorial_succ],
-      simp only [right_distrib, left_distrib, div_eq_mul_inv, nat.cast_add, nat.cast_one, 
-        one_mul, mul_one, nat.cast_mul],
-      ring_nf,
-    }
+    { rw [finset.sum_range_succ, ih, nat.factorial_succ],
+      simp, ring,
+    },
   end
 
   -- TODO : 0_126
