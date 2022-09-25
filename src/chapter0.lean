@@ -24,6 +24,7 @@ SOFTWARE.
 -/
 import tactic
 import data.real.basic
+import number_theory.bernoulli
 import lemmas0
 
 open_locale big_operators
@@ -390,9 +391,7 @@ namespace chapter0_1
     },
   end
 
-
-  -- TODO: The general case sum_integers_0_121 with Bernoulli numbers
-  
+  def sum_integers_0_121 {n q : ℕ} := sum_range_pow n q
 
   -- convert proof over ℝ to proof over ℕ, if desired
   theorem convert_proof_real_to_nat (n : ℕ) (f g : ℕ → ℕ) :
@@ -418,7 +417,6 @@ namespace chapter0_1
     { norm_num, },
   end
 
-  -- TODO: sum_2k_sub_one_0_122 with Bernoulli numbers
 
   @[simp] theorem sum_2k_sub_one_0_122_1 {n : ℕ} : 
     ∑ (k : ℕ) in finset.range n, (↑2 * (k + 1) - 1 : ℝ) = ↑n ^ 2 :=
@@ -482,6 +480,31 @@ namespace chapter0_1
     },
   end
 
+  /- Add the powers of the first n odd integers, and use the sum of powers formula to rewrite as a difference -/
+  theorem sum_2k_sub_one_0_122 {n q : ℕ} :
+    ∑ (k : ℕ) in finset.range n, ((2 : ℚ) * k + 1) ^ q
+    = ∑ (i : ℕ) in finset.range (q + 1),
+      bernoulli i * ↑((q + 1).choose i) * ↑(2 * n) ^ (q + 1 - i) / (q + 1) - 
+      2 ^ q * ∑ (i : ℕ) in finset.range (q + 1), bernoulli i * ↑((q + 1).choose i) * ↑n ^ (q + 1 - i) / (↑q + 1) :=
+  begin
+    rw [← sum_integers_0_121, ← sum_integers_0_121, finset.mul_sum],
+    rename_var x k,
+    induction n with n ih,
+    { simp, },
+    {
+      rw [nat.succ_eq_add_one, left_distrib 2 n 1, mul_one],
+      repeat {rw finset.sum_range_succ},
+      rename_var x k,
+      rw ih,
+      have : (2 ^ q : ℚ) * ↑n ^ q = (2 * n) ^ q, by ring_exp,
+      rw [this, sub_eq_add_neg, add_assoc, add_assoc, add_sub_assoc, 
+        add_right_inj, ← sub_sub, sub_eq_add_neg, sub_eq_add_neg, 
+        add_comm (↑(2 * n) ^ q + ↑(2 * n + 1) ^ q), add_assoc,
+        add_right_inj],
+      field_simp,
+    },
+  end
+
   @[simp] theorem sum_k_mul_k_add_one_sq_0_123 {n : ℕ} :
     ∑ (k : ℕ) in finset.range n, (↑k + (1 : ℝ)) * (k + 2) ^ 2 = ↑n / 12 * (n + 1) * (n + 2) * (3 * n + 5) :=
   begin
@@ -522,7 +545,7 @@ namespace chapter0_1
     },
   end
 
-  -- TODO : 0_126
+  
 
 end chapter0_1
 
