@@ -24,6 +24,14 @@ namespace umbral_calculus
   def shift_a_operator (a : R) (ps : R[X]) : R[X] :=
     polynomial.comp ps (polynomial.X + polynomial.C a)
 
+  @[simp] lemma shift_x_by_a {a : R} :
+    shift_a_operator a polynomial.X = polynomial.X + polynomial.C a := 
+      by rw [shift_a_operator, polynomial.X_comp]
+
+  @[simp] lemma shift_monomial_by_a {a : R} :
+    shift_a_operator a ((polynomial.X) ^ n) = (polynomial.X + polynomial.C a) ^ n := 
+    by rw [shift_a_operator, polynomial.X_pow_comp]
+  
   def shift_one_op_eq_shift_op :
     (shift_operator : R[X] → R[X]) = shift_a_operator 1 :=
   begin
@@ -41,16 +49,36 @@ namespace umbral_calculus
     rw add_assoc,
   end
 
-  theorem shift_is_linear_map (a : R) : is_linear_map R (shift_a_operator a) :=
+  def shift_ring_hom (a : R) : ring_hom R[X] R[X] :=
   {
-    map_add := begin
-      intros x y,
-      rw [shift_a_operator, shift_a_operator, shift_a_operator, 
-        polynomial.add_comp],
+    to_fun := shift_a_operator a,
+    map_one' := by rw [shift_a_operator, polynomial.one_comp],
+    map_mul' := begin
+      intros a b,
+      repeat {rw shift_a_operator},
+      simp,
     end,
-    map_smul := begin
-      intros c x,
-      rw [shift_a_operator, shift_a_operator, polynomial.smul_comp],
+    map_zero' := by rw [shift_a_operator, polynomial.zero_comp],
+    map_add' := begin
+      intros a b,
+      repeat {rw shift_a_operator},
+      simp,
+    end,
+  }
+
+  def shift_linear_map (a : R) : linear_map (shift_ring_hom a) R[X] R[X] :=
+  {
+    to_fun := shift_a_operator a,
+    map_add' := begin
+      intros x y,
+      repeat {rw shift_a_operator},
+      rw polynomial.add_comp,
+    end,
+    map_smul' := begin
+      intros x y,
+      repeat {rw shift_a_operator},
+      simp,
+      refl,
     end,
   }
 
@@ -69,26 +97,17 @@ namespace umbral_calculus
     end
   }
 
-  class is_shift_invariant_op (op : R[X] → R[X]) extends is_linear_map R op :=
-    (is_shift_invariant : ∀ (a : R) (p : R[X]), op (shift_a_operator a p) = (shift_a_operator a) (op p))
-
+  class shift_invariant_op {a : R} (b : R) (op : R[X] →ₗ[R] R[X]) :=
+    (is_shift_invariant : ∀ (p : R[X]), op (shift_linear_map b p) = (shift_linear_map b) (op p))
+/-
   -- The shift operators are shift invariant
-  instance shift_n_operator_is_shift_invariant_op (a : R): 
-    is_shift_invariant_op (shift_a_operator a : R[X] → R[X]) :=
+  instance shift_a_operator_is_shift_invariant_op {a : R} : 
+    shift_invariant_op (shift_linear_map a) :=
   {
-    map_add := begin
-      intros x y,
-      rw [shift_a_operator, shift_a_operator, shift_a_operator, 
-        polynomial.add_comp],
-    end,
-    map_smul := begin
-      intros c x,
-      rw [shift_a_operator, shift_a_operator, polynomial.smul_comp],
-    end,
     is_shift_invariant := begin
       intros k p,
-      repeat {rw shift_ab_operator_add},
-      rw add_comm,
+      repeat {rw shift_a_operator},
+      rw polynomial.comp_assoc,
     end,
   }
   
@@ -119,7 +138,12 @@ namespace umbral_calculus
 
   lemma delta_decreases_degree (p : R[X]) : (delta_op (polynomial.X ^ (n + 1))).degree = n :=
   begin
-    
+    have q₁ := _inst_2.is_delta,
+    cases q₁ with a q₁,
+    have := add_pow polynomial.X (polynomial.C a) n,
+    have q₂ : delta_op ((polynomial.X + polynomial.C a) ^ n) = delta_op (∑ (m : ℕ) in range (n + 1), polynomial.X ^ m * polynomial.C a ^ (n - m) * ↑(n.choose m)), by rw this,
+    clear this,
+    rw linear_map.map_sum,
   end
-  
+-/
 end umbral_calculus
