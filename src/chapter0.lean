@@ -25,6 +25,7 @@ SOFTWARE.
 import tactic
 import data.real.basic
 import number_theory.bernoulli
+import special_constants
 import lemmas0
 
 open_locale big_operators
@@ -545,7 +546,17 @@ namespace chapter0_1
     },
   end
 
-  
+  /-
+  TODO : 0_126: Need more development of Bessel functions before proving this one
+  @[simp] theorem sum_0_126 {n k : ℕ} :
+    ∑ (k : ℕ) in finset.range (n + 1), (n + k).factorial / (k.factorial * (n - k).factorial = 
+  -/
+
+  @[simp] theorem sum_of_reciprocals_0_131 {n : ℕ} :
+    ∑ (k : ℕ) in finset.range n, (1 : ℝ) / (↑k + 1) = 
+    special_constants.γ + real.log n + (1 : ℝ) / (2 * n) -
+    sum
+
 
 end chapter0_1
 
