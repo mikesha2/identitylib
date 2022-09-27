@@ -100,55 +100,74 @@ namespace umbral_calculus
 
   class shift_invariant_op (op : R[X] →+* R[X]) :=
     (is_shift_invariant : ∀ (a : R), ring_hom.comp 
-      op (shift_linear_map a) = (shift_linear_map a).to_fun (op.to_fun p))
+      op (shift_ring_hom a) = ring_hom.comp (shift_ring_hom a) op)
 
   -- The shift operators are shift invariant
   instance shift_a_operator_is_shift_invariant_op (a : R) : 
     shift_invariant_op (shift_ring_hom a) :=
   {
     is_shift_invariant := begin
-      intros p q,
-      repeat {rw shift_a_operator},
+      intros b,
+      repeat {rw shift_ring_hom},
+      repeat {rw ring_hom.comp},
       simp,
-      ext k,
-      rintro ⟨g, hg, rfl⟩,
+      repeat {rw function.comp},
+      ext,
+      repeat {rw shift_a_operator},
+      repeat {rw polynomial.comp_assoc},
+      repeat {rw polynomial.add_comp},
+      simp,
+      rw [add_assoc, add_comm (polynomial.C a), ← add_assoc],
     end,
   }
 
-  class delta_op (a : R) (op : R[X] →+* R[X]) extends shift_invariant_op a op :=
+  class delta_op (op : R[X] →+* R[X]) extends shift_invariant_op op :=
     (is_delta : ∃ (c : R), op polynomial.X = polynomial.C c ∧ c ≠ 0)
 
   /- This lemma specifically requires a ring structure on R 
      so that we can use the additive group property add_right_inj.
      The previous theorems only require a semiring.
   -/
-  lemma delta_constant_is_zero (op : R[X] →+* R[X]) [delta_op a op] :
+  lemma delta_constant_is_zero (op : R[X] →+* R[X]) [delta_op op] :
     ∀ (a : R), op (polynomial.C a) = 0 :=
   begin
     intro a,
-    have q₁ := _inst_2.is_shift_invariant polynomial.X,
+    have q₁ := _inst_2.is_shift_invariant a,
     have q₂ := _inst_2.is_delta,
     cases q₂ with c q₃,
-    ext q₁,
+    repeat {rw ring_hom.comp at q₁},
+    simp at q₁,
+    repeat {rw function.comp at q₁},
+    replace q₁ : (λ (x : R[X]), op ((shift_ring_hom a) x)) (polynomial.X) = 
+      (λ (x : R[X]), (shift_ring_hom a) (op x)) (polynomial.X) := by rw q₁,
+    simp at q₁,
+    repeat {rw shift_ring_hom at q₁},
+    simp at q₁,
+    repeat {rw shift_a_operator at q₁},
     rw q₃.1 at q₁,
-    rw [shift_a_operator, polynomial.X_comp,
-      _inst_2.map_add polynomial.X (polynomial.C a), q₃.1,
-      shift_a_operator, polynomial.C_comp] at q₁,
+    rw polynomial.C_comp at q₁,
     nth_rewrite_rhs 0 ← add_zero (polynomial.C c) at q₁,
     rw add_right_inj at q₁,
     exact q₁,
   end
-/-
-  variables (delta_op : R[X] → R[X]) [is_delta_op delta_op]
 
-  lemma delta_decreases_degree (p : R[X]) : (delta_op (polynomial.X ^ (n + 1))).degree = n :=
+  lemma delta_decreases_degree (n : ℕ) (op : R[X] →+* R[X]) [delta_op op] 
+    : (op (polynomial.X ^ (n + 1))).degree = ↑n :=
   begin
     have q₁ := _inst_2.is_delta,
     cases q₁ with a q₁,
-    have := add_pow polynomial.X (polynomial.C a) n,
-    have q₂ : delta_op ((polynomial.X + polynomial.C a) ^ n) = delta_op (∑ (m : ℕ) in range (n + 1), polynomial.X ^ m * polynomial.C a ^ (n - m) * ↑(n.choose m)), by rw this,
+    have := add_pow polynomial.X (polynomial.C a) (n + 1),
+    have q₂ : op ((polynomial.X + polynomial.C a) ^ (n + 1)) = op (∑ (m : ℕ) in range (n + 1 + 1), polynomial.X ^ m * polynomial.C a ^ (n + 1 - m) * ↑((n + 1).choose m)), by rw this,
     clear this,
-    rw linear_map.map_sum,
+    -- linearity of ring homomorphisms
+    rw ring_hom.map_sum at q₂,
+    simp at q₂,
+    rw delta_constant_is_zero at q₂,
+    simp at q₂,
+    have q₃ : op ((polynomial.X + polynomial.C a) ^ (n + 1)) = (shift_a_operator a) (op (polynomial.X) ^ n) :=
+    begin
+      
+    end,
   end
--/
+
 end umbral_calculus
