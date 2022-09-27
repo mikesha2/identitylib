@@ -13,6 +13,7 @@ namespace umbral_calculus
   -- Describe binomial polynomial sequences
   class binomial_polynomial_sequence (ps : ℕ → R[X]) :=
     (to_poly : ℕ → R[X])
+    (degree_matches : ∀ (n : ℕ), ↑n = (to_poly n).degree)
     (is_binomial : ∀ (n : ℕ) (x y : R), (ps n).eval (x + y) = 
       ∑ (k : ℕ) in range (n + 1), ((ps k).eval x) * ((ps (n - k)).eval y) * n.choose k)
   
@@ -57,6 +58,10 @@ namespace umbral_calculus
   instance monomial_is_bps : binomial_polynomial_sequence (λ (n : ℕ), polynomial.monomial n (1 : ℝ)) :=
   {
     to_poly := (λ (n : ℕ), polynomial.monomial n (1 : ℝ)),
+    degree_matches := begin
+      intro n,
+      simp,
+    end,
     is_binomial := begin
       intros n x y,
       simp,
