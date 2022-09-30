@@ -1,0 +1,36 @@
+import algebra.parity
+
+we state that n is a natural number (what mathematicians call 0, 1, 2, …)
+we are stating what we wish to prove: if n is even, then n2 is even. The arrow to the right means “implies.”
+begin
+  intro p,
+
+
+
+  rw even at *,
+
+
+
+  cases p with r h,
+
+
+
+
+  use (r ^ 2 + r ^ 2),
+
+
+
+
+
+
+
+  rw h,
+
+
+
+
+  ring,
+end
+
+
+
