@@ -1,6 +1,7 @@
 import data.polynomial.basic
 import data.polynomial.eval
 import data.real.basic
+import ring_theory.derivation
 
 noncomputable theory
 open finset
@@ -151,11 +152,81 @@ namespace umbral_calculus
     exact q₁,
   end
 
+  lemma delta_op_comm_shift_pow {R : Type} (n : ℕ)
+    [comm_ring R]
+    (op : R[X] →+* R[X])
+    [delta_op op]
+    (a : R) :
+    op ((polynomial.X + polynomial.C a) ^ (n + 1)) =
+      shift_a_operator a (op polynomial.X ^ (n + 1)) :=
+  begin
+    have q' := _inst_3.is_shift_invariant a,
+    repeat {rw ring_hom.comp at q'},
+    simp at q',
+    repeat {rw function.comp at q'},
+    replace q' : (λ (x : R[X]), op ((shift_ring_hom a) x)) (polynomial.X ^ (n + 1)) = 
+      (λ (x : R[X]), (shift_ring_hom a) (op x)) (polynomial.X ^ (n + 1)) := by rw q',
+    dsimp at q',
+    rw ← shift_monomial_by_a,
+    repeat {rw shift_ring_hom at q'},
+    simp at q',
+    simp,
+    exact q',
+  end
+
+  lemma delta_op_is_linear_map (op : R[X] →+* R[X]) [delta_op op] :
+    linear_map op R[X] R[X] :=
+  {
+    to_fun := op,
+    map_add' := begin
+      intros x y,
+      simp,
+    end,
+    map_smul' := begin
+      intros r x,
+      simp,
+    end,
+  }
+
+  instance delta_op.has_smul (op : R[X] →+* R[X]) [delta_op op] : has_smul R R[X] :=
+  {
+    smul := (λ (r: R) (x : R[X]), polynomial.C r * op x),
+  }
+
+  -- Show that delta ops obey the Leibniz rule
+  instance delta_op_is_derivation (op : R[X] →+* R[X]) [delta_op op] :
+    derivation R R[X] R[X] :=
+  {
+    to_fun := op,
+    map_add' := begin
+      intros x y,
+      simp,
+    end,
+    map_smul' := begin
+      intros r x,
+      simp,
+      have := linear_map.map_smul (delta_op_is_linear_map op) r,
+    end,
+  }
+
   lemma delta_decreases_degree (n : ℕ) (op : R[X] →+* R[X]) [delta_op op] 
     : (op (polynomial.X ^ (n + 1))).degree = ↑n :=
   begin
-    have q₁ := _inst_2.is_delta,
-    cases q₁ with a q₁,
+    induction n with n ih,
+    {
+      simp,
+      have q₁ := _inst_2.is_delta,
+      cases q₁ with a q₁,
+      have q₂ := q₁.1,
+      have := congr_arg polynomial.degree q₂,
+      rw polynomial.degree_C q₁.2 at this,
+      exact this,
+    },
+    {
+
+    },
+
+/-
     have := add_pow polynomial.X (polynomial.C a) (n + 1),
     have q₂ : op ((polynomial.X + polynomial.C a) ^ (n + 1)) = op (∑ (m : ℕ) in range (n + 1 + 1), polynomial.X ^ m * polynomial.C a ^ (n + 1 - m) * ↑((n + 1).choose m)), by rw this,
     clear this,
@@ -164,10 +235,10 @@ namespace umbral_calculus
     simp at q₂,
     rw delta_constant_is_zero at q₂,
     simp at q₂,
-    have q₃ : op ((polynomial.X + polynomial.C a) ^ (n + 1)) = (shift_a_operator a) (op (polynomial.X) ^ n) :=
-    begin
-      
-    end,
+
+    have q₃ := delta_op_comm_shift_pow n op a,
+    have q₄ : (0 : R[X]) ^ 0 = 1, by norm_num,
+-/
   end
 
 end umbral_calculus
