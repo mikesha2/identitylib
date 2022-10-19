@@ -193,26 +193,10 @@ namespace umbral_calculus
     smul := (λ (r: R) (x : R[X]), polynomial.C r * op x),
   }
 
-  -- Show that delta ops obey the Leibniz rule
-  instance delta_op_is_derivation (op : R[X] →+* R[X]) [delta_op op] :
-    derivation R R[X] R[X] :=
-  {
-    to_fun := op,
-    map_add' := begin
-      intros x y,
-      simp,
-    end,
-    map_smul' := begin
-      intros r x,
-      simp,
-      have := linear_map.map_smul (delta_op_is_linear_map op) r,
-    end,
-  }
-
   lemma delta_decreases_degree (n : ℕ) (op : R[X] →+* R[X]) [delta_op op] 
     : (op (polynomial.X ^ (n + 1))).degree = ↑n :=
   begin
-    induction n with n ih,
+/-    induction n with n ih,
     {
       simp,
       have q₁ := _inst_2.is_delta,
@@ -223,9 +207,24 @@ namespace umbral_calculus
       exact this,
     },
     {
-
+      
     },
-
+-/
+    have q₁ := _inst_2.is_delta,
+    cases q₁ with a q₁,
+    have := add_pow polynomial.X (polynomial.C a) (n + 1),
+    have q₂ : op ((polynomial.X + polynomial.C a) ^ (n + 1)) = op (∑ (m : ℕ) in range (n + 1 + 1), polynomial.X ^ m * polynomial.C a ^ (n + 1 - m) * ↑((n + 1).choose m)), by rw this,
+    clear this,
+    -- linearity of ring homomorphisms
+    rw ring_hom.map_sum at q₂,
+    simp at q₂,
+    have q₃ : ((op polynomial.X + op (polynomial.C a)) ^ (n + 1)).eval 0 = (∑ (x : ℕ) in range (n + 1 + 1), op polynomial.X ^ x * op (polynomial.C a) ^ (n + 1 - x) * ↑((n + 1).choose x)).eval 0, by rw q₂,
+    simp at q₃,
+    rw [q₁.1, polynomial.eval_C, delta_constant_is_zero, polynomial.eval_zero, add_zero] at q₃,
+/-
+    rw delta_constant_is_zero at q₂,
+    simp at q₂,
+-/
 /-
     have := add_pow polynomial.X (polynomial.C a) (n + 1),
     have q₂ : op ((polynomial.X + polynomial.C a) ^ (n + 1)) = op (∑ (m : ℕ) in range (n + 1 + 1), polynomial.X ^ m * polynomial.C a ^ (n + 1 - m) * ↑((n + 1).choose m)), by rw this,
