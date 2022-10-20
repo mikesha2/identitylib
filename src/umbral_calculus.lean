@@ -1,13 +1,14 @@
 import data.polynomial.basic
 import data.polynomial.eval
 import data.real.basic
+import algebra.ring.basic
 import ring_theory.derivation
 
 noncomputable theory
 open finset
 open_locale big_operators polynomial
 universes u v
-variables {R : Type} {a b : R} {m n : ℕ} [comm_ring R]
+variables {R : Type} {a b : R} {m n : ℕ} [field R] [nontrivial R]
 
 namespace umbral_calculus
 
@@ -133,8 +134,8 @@ namespace umbral_calculus
     ∀ (a : R), op (polynomial.C a) = 0 :=
   begin
     intro a,
-    have q₁ := _inst_2.is_shift_invariant a,
-    have q₂ := _inst_2.is_delta,
+    have q₁ := _inst_3.is_shift_invariant a,
+    have q₂ := _inst_3.is_delta,
     cases q₂ with c q₃,
     repeat {rw ring_hom.comp at q₁},
     simp at q₁,
@@ -152,8 +153,7 @@ namespace umbral_calculus
     exact q₁,
   end
 
-  lemma delta_op_comm_shift_pow {R : Type} (n : ℕ)
-    [comm_ring R]
+  lemma delta_op_comm_shift_pow (n : ℕ)
     (op : R[X] →+* R[X])
     [delta_op op]
     (a : R) :
@@ -193,13 +193,48 @@ namespace umbral_calculus
     smul := (λ (r: R) (x : R[X]), polynomial.C r * op x),
   }
 
+  theorem delta_op.is_derivation (op : R[X] →+* R[X]) [delta_op op] 
+    (n : ℕ) : (op (polynomial.X ^ (n + 1))).degree = 
+    ((op polynomial.X ^ n) * polynomial.X + polynomial.X ^ (n + 1) * op polynomial.X).degree 
+    :=
+  begin
+    have q₁ := _inst_3.is_delta,
+    cases q₁ with a q₁,
+    cases q₁ with b c,
+  /-
+    induction n with n ih,
+    {
+      simp,
+      have q₁ := _inst_3.is_delta,
+      cases q₁ with a h,
+      have q₂ : (polynomial.X : R[X]).degree = 1 := polynomial.degree_X,
+      rw h.1,
+      rw polynomial.degree_C h.2,
+
+      /-
+      have : (0 : with_bot ℕ) < (polynomial.X : R[X]).degree :=
+      begin
+        have : 0 < 1, by norm_num,
+        rw ← with_bot.coe_lt_coe at this,
+        simp,
+        exact this,
+      end,
+      rw [h.1, polynomial.degree_add_C this],
+      -/
+    },
+    {
+      
+    },
+  -/
+  end
+
   lemma delta_decreases_degree (n : ℕ) (op : R[X] →+* R[X]) [delta_op op] 
     : (op (polynomial.X ^ (n + 1))).degree = ↑n :=
   begin
-/-    induction n with n ih,
+    induction n with n ih,
     {
       simp,
-      have q₁ := _inst_2.is_delta,
+      have q₁ := _inst_3.is_delta,
       cases q₁ with a q₁,
       have q₂ := q₁.1,
       have := congr_arg polynomial.degree q₂,
@@ -209,18 +244,31 @@ namespace umbral_calculus
     {
       
     },
--/
-    have q₁ := _inst_2.is_delta,
+
+/-
+    have q₁ := _inst_3.is_delta,
     cases q₁ with a q₁,
-    have := add_pow polynomial.X (polynomial.C a) (n + 1),
-    have q₂ : op ((polynomial.X + polynomial.C a) ^ (n + 1)) = op (∑ (m : ℕ) in range (n + 1 + 1), polynomial.X ^ m * polynomial.C a ^ (n + 1 - m) * ↑((n + 1).choose m)), by rw this,
+    have := add_pow (polynomial.C a) polynomial.X (n + 1),
+    have q₂ : op ((polynomial.X + polynomial.C a) ^ (n + 1)) = op (∑ (m : ℕ) in range (n + 1 + 1), polynomial.C a ^ m * polynomial.X ^ (n + 1 - m) * ↑((n + 1).choose m)) := begin
+      rw add_comm,
+      rw this,
+    end,
     clear this,
     -- linearity of ring homomorphisms
     rw ring_hom.map_sum at q₂,
-    simp at q₂,
+    /-simp at q₂,
+    have : a = (polynomial.X : R[X]).eval a, by simp,
+    rw this at q₂,-/
+
+    have := delta_op_comm_shift_pow n op a,
+    rw this at q₂,
+-/
+  /-
     have q₃ : ((op polynomial.X + op (polynomial.C a)) ^ (n + 1)).eval 0 = (∑ (x : ℕ) in range (n + 1 + 1), op polynomial.X ^ x * op (polynomial.C a) ^ (n + 1 - x) * ↑((n + 1).choose x)).eval 0, by rw q₂,
     simp at q₃,
     rw [q₁.1, polynomial.eval_C, delta_constant_is_zero, polynomial.eval_zero, add_zero] at q₃,
+  -/
+
 /-
     rw delta_constant_is_zero at q₂,
     simp at q₂,
